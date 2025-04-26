@@ -153,53 +153,55 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-
 import { Input } from "@/components/ui/input";
 
 export function DataTableDemo({ data }) {
   const [search, setSearch] = React.useState("");
 
+  console.log("The Data is ", data);
+
+  // Simple search on company name
   const filteredData = data.filter((item) =>
-    item.invoice.toLowerCase().includes(search.toLowerCase())
+    item.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="w-full">
-      {/* <div className="flex items-center py-4">
+      <div className="flex items-center py-4">
         <Input
-          placeholder="Filter invoices..."
+          placeholder="Search companies..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
         />
-      </div> */}
+      </div>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px]">Invoice</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Method</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="w-[100px]">Name</TableHead>
+              <TableHead>Logo</TableHead>
+              <TableHead>Created At</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredData.map((invoice) => (
-              <TableRow key={invoice.invoice}>
-                <TableCell className="font-medium">{invoice.invoice}</TableCell>
-                <TableCell>{invoice.paymentStatus}</TableCell>
-                <TableCell>{invoice.paymentMethod}</TableCell>
-                <TableCell className="text-right">
-                  {invoice.totalAmount}
+            {filteredData.map((company) => (
+              <TableRow key={company._id}>
+                <TableCell className="font-medium">{company.name}</TableCell>
+                <TableCell>
+                  {company.logo?.url ? (
+                    <img
+                      src={company.logo.url}
+                      alt={company.name}
+                      className="h-10 w-10 object-cover rounded-full"
+                    />
+                  ) : (
+                    "No Logo"
+                  )}
+                </TableCell>
+                <TableCell>
+                  {new Date(company.createdAt).toLocaleDateString()}
                 </TableCell>
               </TableRow>
             ))}

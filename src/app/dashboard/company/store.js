@@ -38,28 +38,54 @@ export const {
 } = CompanySlice.actions;
 
 // Create Company
+// export const createCompany = (companyData) => async (dispatch) => {
+//   dispatch(setLoading(true));
+//   try {
+//     const { data } = await axios.post(
+//       `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company`,
+//       companyData,
+//       { withCredentials: true }
+//     );
+//     // const { data } = await axios.post(
+//     //   `http://localhost:8080/api/v1`,
+//     //   companyData,
+//     //   { withCredentials: true }
+//     // );
+//     dispatch(setMessage(data.message));
+//   } catch (error) {
+//     dispatch(setError(error.response?.data?.message || error.message));
+//   } finally {
+//     dispatch(setLoading(false));
+//   }
+// };
+
+
 export const createCompany = (companyData) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.post(
-      `${process.env.MASTER_SERVER_URL}/company`,
+      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company`,
       companyData,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));
   } catch (error) {
-    dispatch(setError(error.response?.data?.message || error.message));
+    const errorMessage = error.response?.data?.message || error.message;
+    dispatch(setError(errorMessage));
+    throw new Error(errorMessage); // THROW so that it can be caught in the component
   } finally {
     dispatch(setLoading(false));
   }
 };
 
+
 // Get All Companies
-export const fetchCompanies = () => async (dispatch) => {
+export const fetchCompanies = (page = 1, limit = 5) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
+    // const response = await axios.get(`/api/company?page=${page}&limit=${limit}`);
     const { data } = await axios.get(
-      `${process.env.MASTER_SERVER_URL}/company`,
+      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company?page=${page}&limit=${limit}`,
       { withCredentials: true }
     );
     dispatch(setCompanies(data.data));
@@ -75,7 +101,7 @@ export const getCompanyById = (companyId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.get(
-      `${process.env.MASTER_SERVER_URL}/company/${companyId}`,
+      `${process.env.COMPANY_SERVER_URL}/company/${companyId}`,
       { withCredentials: true }
     );
     dispatch(setSelectedCompany(data.data));
@@ -91,7 +117,7 @@ export const updateCompany = (companyId, companyData) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.patch(
-      `${process.env.MASTER_SERVER_URL}/company/${companyId}`,
+      `${process.env.COMPANY_SERVER_URL}/company/${companyId}`,
       companyData,
       { withCredentials: true }
     );
@@ -108,7 +134,7 @@ export const deleteCompany = (companyId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.delete(
-      `${process.env.MASTER_SERVER_URL}/company/${companyId}`,
+      `${process.env.COMPANY_SERVER_URL}/company/${companyId}`,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));
