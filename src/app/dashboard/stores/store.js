@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const CompanySlice = createSlice({
-  name: "company",
+export const StoreSlice = createSlice({
+  name: "store",
   initialState: {
     loading: false,
-    companies: [],
-    selectedCompany: null,
+    stores: [],
+    selectedStore: null,
     message: "",
     error: null,
   },
@@ -14,11 +14,11 @@ export const CompanySlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
-    setCompanies: (state, action) => {
-      state.companies = action.payload;
+    setStores: (state, action) => {
+      state.stores = action.payload;
     },
-    setSelectedCompany: (state, action) => {
-      state.selectedCompany = action.payload;
+    setSelectedStore: (state, action) => {
+      state.selectedStore = action.payload;
     },
     setMessage: (state, action) => {
       state.message = action.payload;
@@ -31,43 +31,40 @@ export const CompanySlice = createSlice({
 
 export const {
   setLoading,
-  setCompanies,
-  setSelectedCompany,
+  setStores,
+  setSelectedStore,
   setMessage,
   setError,
-} = CompanySlice.actions;
+} = StoreSlice.actions;
 
-
-
-export const createCompany = (companyData) => async (dispatch) => {
+// Create Store
+export const createStore = (storeData) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.post(
-      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company`,
-      companyData,
+      `${process.env.SERVER_URL}/store`,
+      storeData,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message;
     dispatch(setError(errorMessage));
-    throw new Error(errorMessage); // THROW so that it can be caught in the component
+    throw new Error(errorMessage);
   } finally {
     dispatch(setLoading(false));
   }
 };
 
-
-// Get All Companies
-export const fetchCompanies = (page = 1, limit = 5) => async (dispatch) => {
+// Fetch all stores
+export const fetchStores = (page = 1, limit = 5) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    // const response = await axios.get(`/api/company?page=${page}&limit=${limit}`);
     const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company?page=${page}&limit=${limit}`,
+      `${process.env.SERVER_URL}/store?page=${page}&limit=${limit}`,
       { withCredentials: true }
     );
-    dispatch(setCompanies(data.data));
+    dispatch(setStores(data.data));
   } catch (error) {
     dispatch(setError(error.response?.data?.message || error.message));
   } finally {
@@ -75,15 +72,15 @@ export const fetchCompanies = (page = 1, limit = 5) => async (dispatch) => {
   }
 };
 
-// Get Company by ID
-export const getCompanyById = (companyId) => async (dispatch) => {
+// Get Store by ID
+export const getStoreById = (storeId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.get(
-      `${process.env.COMPANY_SERVER_URL}/company/${companyId}`,
+      `${process.env.NEXT_PUBLIC_STORE_SERVER_URL}/store/${storeId}`,
       { withCredentials: true }
     );
-    dispatch(setSelectedCompany(data.data));
+    dispatch(setSelectedStore(data.data));
   } catch (error) {
     dispatch(setError(error.response?.data?.message || error.message));
   } finally {
@@ -91,13 +88,13 @@ export const getCompanyById = (companyId) => async (dispatch) => {
   }
 };
 
-// Update Company
-export const updateCompany = (companyId, companyData) => async (dispatch) => {
+// Update Store
+export const updateStore = (storeId, storeData) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.patch(
-      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company/${companyId}`,
-      companyData,
+      `${process.env.NEXT_PUBLIC_STORE_SERVER_URL}/store/${storeId}`,
+      storeData,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));
@@ -105,18 +102,17 @@ export const updateCompany = (companyId, companyData) => async (dispatch) => {
     const errorMessage = error.response?.data?.message || error.message;
     dispatch(setError(errorMessage));
     throw new Error(errorMessage);
-
   } finally {
     dispatch(setLoading(false));
   }
 };
 
-// Delete Company
-export const deleteCompany = (companyId) => async (dispatch) => {
+// Delete Store
+export const deleteStore = (storeId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.delete(
-      `${process.env.COMPANY_SERVER_URL}/company/${companyId}`,
+      `${process.env.NEXT_PUBLIC_STORE_SERVER_URL}/store/${storeId}`,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));
@@ -129,15 +125,15 @@ export const deleteCompany = (companyId) => async (dispatch) => {
   }
 };
 
-
-export const updateCompanyLogo = (companyId, logoFile) => async (dispatch) => {
+// Update Store Logo
+export const updateStoreLogo = (storeId, logoFile) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const formData = new FormData();
     formData.append("logo", logoFile);
 
     const { data } = await axios.patch(
-      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company/update-company-logo/${companyId}`,
+      `${process.env.NEXT_PUBLIC_STORE_SERVER_URL}/store/update-store-logo/${storeId}`,
       formData,
       {
         withCredentials: true,
@@ -158,5 +154,21 @@ export const updateCompanyLogo = (companyId, logoFile) => async (dispatch) => {
   }
 };
 
+// Get stores based on company
+export const getStoresBasedOnCompany = (companyId) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    const { data } = await axios.post(
+      `${process.env.NEXT_PUBLIC_STORE_SERVER_URL}/store/get-store-based-on-company`,
+      { companyId },
+      { withCredentials: true }
+    );
+    dispatch(setStores(data.data));
+  } catch (error) {
+    dispatch(setError(error.response?.data?.message || error.message));
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
 
-export default CompanySlice.reducer;
+export default StoreSlice.reducer;
