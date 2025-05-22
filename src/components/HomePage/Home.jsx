@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "motion/react";
-import { useState } from "react";
+// import { motion } from "motion/react";
+import { motion } from "framer-motion";
+
+import { useEffect, useState } from "react";
 import {
   Sheet,
   SheetClose,
@@ -22,7 +24,20 @@ import { userLogin, userProfile } from "./store";
 import Link from "next/link";
 
 export default function HomePage() {
+  const dispatch = useDispatch();
+
   const { profile, isLoggedIn } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(
+      // userProfile((error, response) => {
+      //   if (error) {
+      //     showMessage(error.response?.data?.message || error.message, "error");
+      //   }
+      // })
+      userProfile()
+    );
+  }, [dispatch]);
 
   return (
     <div className="relative mx-auto my-10 flex max-w-7xl flex-col items-center justify-center">
@@ -133,6 +148,35 @@ const Navbar = () => {
   const [phone, setPhone] = useState("");
   const { profile, isLoggedIn } = useSelector((state) => state.auth);
 
+  console.log("The profile is s", profile);
+
+  // useEffect(() => {
+  //   // dispatch(
+  //   //   userProfile((error, response) => {
+  //   //     if (error) {
+  //   //       showMessage(error.response?.data?.message || error.message, "error");
+  //   //     }
+  //   //   })
+  //   // );
+  //   dispatch(userProfile());
+  // }, [dispatch]);
+
+
+  useEffect(() => {
+    dispatch(
+      userProfile((error, response) => {
+        if (error) {
+          if (error.response?.status === 401) {
+            // Don't show the message if unauthorized
+            return;
+          }
+          showMessage(error.response?.data?.message || error.message, "error");
+        }
+      })
+    );
+  }, [dispatch]);
+  
+
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -149,7 +193,7 @@ const Navbar = () => {
       userLogin(userData, (err, data) => {
         if (err) {
           showMessage(err.response?.data?.message || err.message, "error");
-          console.error("Login Error:", err);
+          // console.error("Login Error:", err);
         } else {
           showMessage(data.message);
           setLoginDrawerOpen(false);
@@ -160,7 +204,7 @@ const Navbar = () => {
               }
             })
           );
-          console.log("Login Successful:", data);
+          // console.log("Login Successful:", data);
         }
       })
     );
@@ -255,13 +299,13 @@ const Navbar = () => {
             </SheetContent>
           </Sheet>
         )}
-      {isLoggedIn && (
-  <Link href="/dashboard">
-    <button className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 md:w-32 dark:bg-white dark:text-black dark:hover:bg-gray-200 mr-2">
-      Dashboard
-    </button>
-  </Link>
-)}
+        {isLoggedIn && (
+          <Link href="/dashboard">
+            <button className="w-24 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 md:w-32 dark:bg-white dark:text-black dark:hover:bg-gray-200 mr-2">
+              Dashboard
+            </button>
+          </Link>
+        )}
       </div>
     </nav>
   );

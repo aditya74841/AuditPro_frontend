@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useDispatch } from "react-redux";
 import {
   Table,
   TableBody,
@@ -11,13 +12,24 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { assignUserRole } from "./store";
 
-export function StoreDataTable({ data, onEdit, onDelete }) {
+export function StoreDataTable({ data, onEdit, onDelete, onRoleChange }) {
+  const dispatch = useDispatch();
   const [search, setSearch] = React.useState("");
 
   const filteredData = data.filter((item) =>
     item.name.toLowerCase().includes(search.toLowerCase())
   );
+
+  // console.log("The filteredData", filteredData);
+
+  const handleRoleChange = (e, userId) => {
+    const newRole = e.target.value;
+    if (onRoleChange) {
+      onRoleChange(userId, newRole);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -35,8 +47,9 @@ export function StoreDataTable({ data, onEdit, onDelete }) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Store Name</TableHead>
-              <TableHead>Logo</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              {/* <TableHead>Change Role</TableHead> */}
               <TableHead>Created At</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
@@ -46,17 +59,19 @@ export function StoreDataTable({ data, onEdit, onDelete }) {
               filteredData.map((store) => (
                 <TableRow key={store._id}>
                   <TableCell className="font-medium">{store.name}</TableCell>
-                  <TableCell className="font-medium">{store.companyName}</TableCell>
-                  <TableCell>
-                    {store.logo?.url ? (
-                      <img
-                        src={store.logo.url}
-                        alt={store.name}
-                        className="h-10 w-10 object-cover rounded-full"
-                      />
-                    ) : (
-                      "No Logo"
-                    )}
+                  <TableCell className="font-medium">{store.email}</TableCell>
+                  {/* <TableCell className="font-medium capitalize">
+                    {store.role}
+                  </TableCell> */}
+                  <TableCell className="font-medium">
+                    <select
+                      value={store.role}
+                      onChange={(e) => handleRoleChange(e, store._id)}
+                      className="border rounded px-2 py-1"
+                    >
+                      <option value="USER">User</option>
+                      <option value="ADMIN">Admin</option>
+                    </select>
                   </TableCell>
                   <TableCell>
                     {new Date(store.createdAt).toLocaleDateString()}
@@ -79,7 +94,7 @@ export function StoreDataTable({ data, onEdit, onDelete }) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan="4" className="text-center">
+                <TableCell colSpan="6" className="text-center">
                   No stores found
                 </TableCell>
               </TableRow>

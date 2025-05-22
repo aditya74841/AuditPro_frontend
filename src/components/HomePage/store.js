@@ -12,7 +12,7 @@ export const AuthSlice = createSlice({
     profile: {},
     error: null,
     message: null,
-    profileUrl:""
+    profileUrl: "",
   },
   reducers: {
     setLoading: (state, action) => {
@@ -50,7 +50,7 @@ export const {
   setProfile,
   setError,
   setMessage,
-  setProfileUrl
+  setProfileUrl,
 } = AuthSlice.actions;
 
 // Function to register user
@@ -129,12 +129,13 @@ export const userProfile = (callback) => async (dispatch) => {
       }
     );
 
-    console.log("The Profile Data fetched from  ", data.data.avatar
-.url    );
-dispatch(setProfileUrl(data.data.avatar
-  .url ))
+    //     console.log("The Profile Data fetched from  ", data.data.avatar
+    // .url    );
+    dispatch(setProfileUrl(data.data.avatar.url));
     dispatch(setLoading(false));
     dispatch(setProfile(data.data));
+    dispatch(setIsLoggedIn(true));
+
     if (callback) callback(null, data);
   } catch (error) {
     dispatch(setError(error.response?.data?.message || error.message));
@@ -153,6 +154,9 @@ export const handleLogout = (callback) => async (dispatch) => {
       withCredentials: true,
     });
     dispatch(setLoading(false));
+    dispatch(setIsLoggedIn(false));
+    dispatch(setProfile({}));
+
     if (callback) callback(null, response.data);
   } catch (error) {
     dispatch(setLoading(false));

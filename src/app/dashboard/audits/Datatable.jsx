@@ -1,18 +1,11 @@
 "use client";
 
 import * as React from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export function StoreDataTable({ data, onEdit, onDelete }) {
+export function DataTableDemo({ data, onEdit, onDelete }) {
   const [search, setSearch] = React.useState("");
 
   const filteredData = data.filter((item) =>
@@ -23,7 +16,7 @@ export function StoreDataTable({ data, onEdit, onDelete }) {
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Search stores..."
+          placeholder="Search companies..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="max-w-sm"
@@ -35,7 +28,6 @@ export function StoreDataTable({ data, onEdit, onDelete }) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Store Name</TableHead>
               <TableHead>Logo</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead>Actions</TableHead>
@@ -43,15 +35,14 @@ export function StoreDataTable({ data, onEdit, onDelete }) {
           </TableHeader>
           <TableBody>
             {filteredData.length > 0 ? (
-              filteredData.map((store) => (
-                <TableRow key={store._id}>
-                  <TableCell className="font-medium">{store.name}</TableCell>
-                  <TableCell className="font-medium">{store.companyName}</TableCell>
+              filteredData.map((company) => (
+                <TableRow key={company._id}>
+                  <TableCell className="font-medium">{company.name}</TableCell>
                   <TableCell>
-                    {store.logo?.url ? (
+                    {company.logo?.url ? (
                       <img
-                        src={store.logo.url}
-                        alt={store.name}
+                        src={company.logo.url}
+                        alt={company.name}
                         className="h-10 w-10 object-cover rounded-full"
                       />
                     ) : (
@@ -59,18 +50,18 @@ export function StoreDataTable({ data, onEdit, onDelete }) {
                     )}
                   </TableCell>
                   <TableCell>
-                    {new Date(store.createdAt).toLocaleDateString()}
+                    {new Date(company.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="flex gap-2">
                     <Button
                       className="bg-sky-700 hover:bg-sky-800"
-                      onClick={() => onEdit(store)}
+                      onClick={() => onEdit(company)}
                     >
                       Update
                     </Button>
                     <Button
                       className="bg-red-700 hover:bg-red-800"
-                      onClick={() => onDelete(store._id)}
+                      onClick={() => onDelete(company._id)}
                     >
                       Delete
                     </Button>
@@ -80,7 +71,7 @@ export function StoreDataTable({ data, onEdit, onDelete }) {
             ) : (
               <TableRow>
                 <TableCell colSpan="4" className="text-center">
-                  No stores found
+                  No companies found
                 </TableCell>
               </TableRow>
             )}

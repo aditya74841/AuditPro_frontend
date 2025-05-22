@@ -5,8 +5,7 @@ export const StoreSlice = createSlice({
   name: "store",
   initialState: {
     loading: false,
-    stores: [],
-    storesName: [],
+    staff: [],
     selectedStore: null,
     message: "",
     error: null,
@@ -15,14 +14,11 @@ export const StoreSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
-    setStores: (state, action) => {
-      state.stores = action.payload;
+    setStaff: (state, action) => {
+      state.staff = action.payload;
     },
     setSelectedStore: (state, action) => {
       state.selectedStore = action.payload;
-    },
-    setStoreName: (state, action) => {
-      state.storesName = action.payload;
     },
     setMessage: (state, action) => {
       state.message = action.payload;
@@ -33,21 +29,15 @@ export const StoreSlice = createSlice({
   },
 });
 
-export const {
-  setLoading,
-  setStores,
-  setSelectedStore,
-  setMessage,
-  setError,
-  setStoreName,
-} = StoreSlice.actions;
+export const { setLoading, setSelectedStore, setMessage, setError, setStaff } =
+  StoreSlice.actions;
 
 // Create Store
-export const createStore = (storeData) => async (dispatch) => {
+export const createStaff = (storeData) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.post(
-      `${process.env.SERVER_URL}/store`,
+      `${process.env.SERVER_URL}/users/register-user-staff`,
       storeData,
       { withCredentials: true }
     );
@@ -56,6 +46,45 @@ export const createStore = (storeData) => async (dispatch) => {
     const errorMessage = error.response?.data?.message || error.message;
     dispatch(setError(errorMessage));
     throw new Error(errorMessage);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const fetchStaff =
+  (companyId, page = 1, limit = 5) =>
+  async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      // console.log("Sending companyId to backend:", companyId); // <- add this
+
+      const { data } = await axios.post(
+        `${process.env.SERVER_URL}/users/get-user-based-on-company?page=${page}&limit=${limit}`,
+        { companyId },
+        { withCredentials: true }
+      );
+      // console.log("The Data from fetchStaff Redux", data.data);
+      dispatch(setStaff(data.data));
+    } catch (error) {
+      dispatch(setError(error.response?.data?.message || error.message));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+export const assignUserRole = (userId, role) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    const { data } = await axios.post(
+      `${process.env.SERVER_URL}/users/assign-role/${userId}`,
+      { role },
+      { withCredentials: true }
+    );
+    // dispatch(updateStaffRole({ userId, role }));
+    dispatch(setMessage(data.message));
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    dispatch(setError(errorMessage));
   } finally {
     dispatch(setLoading(false));
   }
@@ -81,22 +110,6 @@ export const updateStore = (storeId, storeData) => async (dispatch) => {
 };
 
 // Fetch all stores
-export const fetchStores =
-  (page = 1, limit = 5) =>
-  async (dispatch) => {
-    dispatch(setLoading(true));
-    try {
-      const { data } = await axios.get(
-        `${process.env.SERVER_URL}/store?page=${page}&limit=${limit}`,
-        { withCredentials: true }
-      );
-      dispatch(setStores(data.data));
-    } catch (error) {
-      dispatch(setError(error.response?.data?.message || error.message));
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
 
 // Get Store by ID
 export const getStoreById = (storeId) => async (dispatch) => {
@@ -162,34 +175,17 @@ export const updateStoreLogo = (storeId, logoFile) => async (dispatch) => {
 };
 
 // Get stores based on company
-export const getStoresBasedOnCompany =
-  (companyId, page = 1, limit = 5) =>
-  async (dispatch) => {
-    dispatch(setLoading(true));
-    try {
-      const { data } = await axios.post(
-        `${process.env.SERVER_URL}/store/get-store-based-on-company?page=${page}&limit=${limit}`,
-        { companyId },
-        { withCredentials: true }
-      );
-      dispatch(setStores(data.data));
-    } catch (error) {
-      dispatch(setError(error.response?.data?.message || error.message));
-    } finally {
-      dispatch(setLoading(false));
-    }
-  };
-
-export const fetchStoreName = () => async (dispatch) => {
+export const getStoresBasedOnCompany = (companyId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    const { data } = await axios.get(
-      `${process.env.SERVER_URL}/store/getStoreName`,
+    console.log("Sending companyId to backend:", companyId); // <- add this
+
+    const { data } = await axios.post(
+      `${process.env.NEXT_PUBLIC_STORE_SERVER_URL}/store/get-store-based-on-company`,
+      { companyId },
       { withCredentials: true }
     );
-    console.log("the Store Name Data is ", data.data);
-
-    dispatch(setStoreName(data.data));
+    dispatch(setStores(data.data));
   } catch (error) {
     dispatch(setError(error.response?.data?.message || error.message));
   } finally {
