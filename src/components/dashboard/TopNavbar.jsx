@@ -41,10 +41,10 @@ export default function TopNavbar() {
             A
           </div>
           <div className="absolute right-0 w-40 bg-white rounded shadow-lg hidden group-hover:block text-sm text-gray-700">
-            <a href="/profile" className="block px-4 py-2 hover:bg-gray-100">
+            <a href="/dashboard/profile" className="block px-4 py-2 hover:bg-gray-100">
               Profile
             </a>
-            <a href="/settings" className="block px-4 py-2 hover:bg-gray-100">
+            <a href="/dashboard/settings" className="block px-4 py-2 hover:bg-gray-100">
               Settings
             </a>
             <button

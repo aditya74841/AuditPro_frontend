@@ -1,6 +1,9 @@
-"use client"
+"use client";
 
 import { Geist, Geist_Mono } from "next/font/google";
+
+import { Toaster } from "react-hot-toast";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,6 +31,26 @@ export default function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              style: {
+                fontSize: "14px",
+              },
+              success: {
+                style: {
+                  background: "#dcfce7",
+                  color: "#166534",
+                },
+              },
+              error: {
+                style: {
+                  background: "#fee2e2",
+                  color: "#991b1b",
+                },
+              },
+            }}
+          />
           {children}
         </body>
       </html>

@@ -187,7 +187,7 @@ export const fetchStoreName = () => async (dispatch) => {
       `${process.env.SERVER_URL}/store/getStoreName`,
       { withCredentials: true }
     );
-    console.log("the Store Name Data is ", data.data);
+    // console.log("the Store Name Data is ", data.data);
 
     dispatch(setStoreName(data.data));
   } catch (error) {

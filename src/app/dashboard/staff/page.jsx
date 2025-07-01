@@ -44,7 +44,13 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import { assignUserRole, createStaff, fetchStaff, getStoresBasedOnCompany } from "./store"; // <-- now correct import (from your new store slice)
+import {
+  assignUserRole,
+  createStaff,
+  fetchStaff,
+  getStoresBasedOnCompany,
+  updateStaff,
+} from "./store"; // <-- now correct import (from your new store slice)
 import { StoreDataTable } from "./Datatable";
 import { fetchCompaniesName } from "../company/store";
 import CompanyCombobox, { ComboboxDemo } from "@/components/Combobox";
@@ -81,7 +87,6 @@ const StorePage = () => {
   //     dispatch(getStoresBasedOnCompany(selectedCompanyOption.value));
   //   }
   // }, [selectedCompanyOption, dispatch]);
-  
 
   useEffect(() => {
     dispatch(fetchCompaniesName());
@@ -95,7 +100,11 @@ const StorePage = () => {
   }, []);
 
   useEffect(() => {
-    if (!profile?.companyId && companiesName.length > 0 && !selectedCompanyOption.value) {
+    if (
+      !profile?.companyId &&
+      companiesName.length > 0 &&
+      !selectedCompanyOption.value
+    ) {
       const defaultOption = companiesName.find(
         (company) => company.value === profile?.companyId
       );
@@ -104,8 +113,6 @@ const StorePage = () => {
       }
     }
   }, [companiesName, profile, selectedCompanyOption]);
-  
-
 
   useEffect(() => {
     const companyIdToFetch =
@@ -125,7 +132,7 @@ const StorePage = () => {
       return Swal.fire("Error", "Email is required", "error");
     }
 
-    if (!password.trim()) {
+    if (!isEditing && !password.trim()) {
       return Swal.fire("Error", "Password is required", "error");
     }
 
@@ -147,8 +154,13 @@ const StorePage = () => {
     };
 
     try {
-      await dispatch(createStaff(postData));
-      Swal.fire("Success", "Staff created successfully", "success");
+      if (isEditing && editingStoreId) {
+        await dispatch(updateStaff(editingStoreId, postData));
+        Swal.fire("Success", "Staff updated successfully", "success");
+      } else {
+        await dispatch(createStaff(postData));
+        Swal.fire("Success", "Staff created successfully", "success");
+      }
 
       // Reset form fields
       setName("");
@@ -176,11 +188,14 @@ const StorePage = () => {
     });
   };
 
-  const handleEditStore = (store) => {
+  const handleEditStore = (staff) => {
     // setStoreName(store.name);
-    // setEditingStoreId(store._id);
-    // setIsEditing(true);
-    // setNewItemDrawerOpen(true);
+    setName(staff.name);
+    setEmail(staff.email);
+    setPhoneNumber(staff.phoneNumber);
+    setEditingStoreId(staff._id);
+    setIsEditing(true);
+    setNewItemDrawerOpen(true);
   };
 
   const handleDeleteStore = async (storeId) => {
@@ -266,16 +281,21 @@ const StorePage = () => {
                 placeholder="Enter email"
                 className="mt-2"
               />
-              <Label htmlFor="password" className="text-lg mt-4">
-                Password
-              </Label>
-              <Input
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter Password"
-                className="mt-2"
-              />
+              {!isEditing && (
+                <>
+                  <Label htmlFor="password" className="text-lg mt-4">
+                    Password
+                  </Label>
+                  <Input
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter Password"
+                    className="mt-2"
+                  />
+                </>
+              )}
+
               <Label htmlFor="phonenumber" className="text-lg mt-4">
                 Phone Number
               </Label>
@@ -286,38 +306,6 @@ const StorePage = () => {
                 placeholder="Enter Phone Number"
                 className="mt-2"
               />
-
-              {!profile?.companyId && (
-                <>
-                  <Label htmlFor="name" className="text-lg mt-4">
-                    Select Company
-                  </Label>
-                  <Select
-                    defaultValue={selectedOption}
-                    onChange={setSelectedOption}
-                    options={companiesName}
-                  />
-                </>
-              )}
-              {isEditing && (
-                <>
-                  <Label htmlFor="logo" className="mt-4">
-                    Store Logo
-                  </Label>
-                  <Input
-                    id="logo"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setLogoFile(e.target.files[0])}
-                    className="border p-2 w-full mt-2"
-                  />
-                  {logoFile && (
-                    <p className="text-sm text-gray-500 mt-2">
-                      Selected: {logoFile.name}
-                    </p>
-                  )}
-                </>
-              )}
             </div>
 
             <SheetFooter>

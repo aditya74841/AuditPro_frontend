@@ -5,7 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export function DataTableDemo({ data, onEdit, onDelete }) {
+export function OptionsDataTable({ data, onEdit, onDelete }) {
   const [search, setSearch] = React.useState("");
 
   const filteredData = data.filter((item) =>

@@ -91,12 +91,12 @@ export const assignUserRole = (userId, role) => async (dispatch) => {
 };
 
 // Update Store
-export const updateStore = (storeId, storeData) => async (dispatch) => {
+export const updateStaff = (staffId, staffData) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.patch(
-      `${process.env.SERVER_URL}/store/${storeId}`,
-      storeData,
+      `${process.env.SERVER_URL}/users/update-user/${staffId}`,
+      staffData,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));
@@ -192,5 +192,6 @@ export const getStoresBasedOnCompany = (companyId) => async (dispatch) => {
     dispatch(setLoading(false));
   }
 };
+
 
 export default StoreSlice.reducer;

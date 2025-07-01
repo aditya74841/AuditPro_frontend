@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const CompanySlice = createSlice({
+export const AuditQuestionSlice = createSlice({
   name: "company",
   initialState: {
     loading: false,
-    companies: [],
-    companiesName:[],
+    auditQuestion: [],
+    auditOptions: [],
     selectedCompany: null,
     message: "",
     error: null,
@@ -15,14 +15,11 @@ export const CompanySlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
-    setCompanies: (state, action) => {
-      state.companies = action.payload;
+    setAuditQuestion: (state, action) => {
+      state.auditQuestion = action.payload;
     },
-    setSelectedCompany: (state, action) => {
-      state.selectedCompany = action.payload;
-    },
-    setCompanyName: (state, action) => {
-      state.companiesName = action.payload;
+    setAuditOptions: (state, action) => {
+      state.auditOptions = action.payload;
     },
     setMessage: (state, action) => {
       state.message = action.payload;
@@ -35,21 +32,20 @@ export const CompanySlice = createSlice({
 
 export const {
   setLoading,
-  setCompanies,
-  setSelectedCompany,
   setMessage,
   setError,
-  setCompanyName
-} = CompanySlice.actions;
+  setAuditQuestion,
+  setCompanyName,
+  setAuditOptions
+} = AuditQuestionSlice.actions;
 
-
-
-export const createCompany = (companyData) => async (dispatch) => {
+export const createAuditName = (auditData) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
+    console.log("checking Data is ");
     const { data } = await axios.post(
-      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company`,
-      companyData,
+      `${process.env.SERVER_URL}/master/create-audit-question-name`,
+      auditData,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));
@@ -62,23 +58,29 @@ export const createCompany = (companyData) => async (dispatch) => {
   }
 };
 
-
 // Get All Companies
-export const fetchCompanies = (page = 1, limit = 5) => async (dispatch) => {
-  dispatch(setLoading(true));
-  try {
-    // const response = await axios.get(`/api/company?page=${page}&limit=${limit}`);
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company?page=${page}&limit=${limit}`,
-      { withCredentials: true }
-    );
-    dispatch(setCompanies(data.data));
-  } catch (error) {
-    dispatch(setError(error.response?.data?.message || error.message));
-  } finally {
-    dispatch(setLoading(false));
-  }
-};
+export const fetchAuditQuestions =
+  (page = 1, limit = 5) =>
+  async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      // const response = await axios.get(`/api/company?page=${page}&limit=${limit}`);
+      const { data } = await axios.get(
+        `${process.env.SERVER_URL}/master/get-audit-question?page=${page}&limit=${limit}`,
+        { withCredentials: true }
+      );
+      console.log("fetchAuditQuestion", data.data);
+      dispatch(setLoading(false));
+      dispatch(setAuditQuestion(data.data));
+      dispatch(setAuditOptions(data.data.options));
+
+    } catch (error) {
+      dispatch(setError(error.response?.data?.message || error.message));
+      dispatch(setLoading(false));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
 // Get Company by ID
 export const getCompanyById = (companyId) => async (dispatch) => {
@@ -97,12 +99,12 @@ export const getCompanyById = (companyId) => async (dispatch) => {
 };
 
 // Update Company
-export const updateCompany = (companyId, companyData) => async (dispatch) => {
+export const updateAuditQuestion = (auditId, auditData) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.patch(
-      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company/${companyId}`,
-      companyData,
+      `${process.env.SERVER_URL}/master/update-audit-question-name/${auditId}`,
+      auditData,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));
@@ -110,18 +112,17 @@ export const updateCompany = (companyId, companyData) => async (dispatch) => {
     const errorMessage = error.response?.data?.message || error.message;
     dispatch(setError(errorMessage));
     throw new Error(errorMessage);
-
   } finally {
     dispatch(setLoading(false));
   }
 };
 
 // Delete Company
-export const deleteCompany = (companyId) => async (dispatch) => {
+export const deleteAuditQuestion = (auditId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.delete(
-      `${process.env.COMPANY_SERVER_URL}/company/${companyId}`,
+      `${process.env.SERVER_URL}/master/delete-audit-question-name/${auditId}`,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));
@@ -133,7 +134,6 @@ export const deleteCompany = (companyId) => async (dispatch) => {
     dispatch(setLoading(false));
   }
 };
-
 
 export const updateCompanyLogo = (companyId, logoFile) => async (dispatch) => {
   dispatch(setLoading(true));
@@ -163,22 +163,63 @@ export const updateCompanyLogo = (companyId, logoFile) => async (dispatch) => {
   }
 };
 
-
-export const fetchCompaniesName = (page = 1, limit = 5) => async (dispatch) => {
+export const createOptions = ({auditId, optionsData}) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    // const response = await axios.get(`/api/company?page=${page}&limit=${limit}`);
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company/get-company-name`,
+    console.log("the Redux audit Id is ", auditId);
+    const { data } = await axios.post(
+      `${process.env.SERVER_URL}/master/create-audit-option/${auditId}`,
+      optionsData,
       { withCredentials: true }
     );
-    dispatch(setCompanyName(data.data));
+    dispatch(setMessage(data.message));
   } catch (error) {
-    dispatch(setError(error.response?.data?.message || error.message));
+    const errorMessage = error.response?.data?.message || error.message;
+    dispatch(setError(errorMessage));
+    throw new Error(errorMessage);
   } finally {
     dispatch(setLoading(false));
   }
 };
 
 
-export default CompanySlice.reducer;
+export const fetchAuditOptions = (auditId) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    console.log("the Redux audit Id is ", auditId);
+    const { data } = await axios.post(
+      `${process.env.SERVER_URL}/master/get-audit-option/${auditId}`,
+      optionsData,
+      { withCredentials: true }
+    );
+    dispatch(setAuditOptions(data.data))
+    dispatch(setMessage(data.message));
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    dispatch(setError(errorMessage));
+    throw new Error(errorMessage);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+
+export const fetchCompaniesName =
+  (page = 1, limit = 5) =>
+  async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      // const response = await axios.get(`/api/company?page=${page}&limit=${limit}`);
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_COMPANY_SERVER_URL}/company/get-company-name`,
+        { withCredentials: true }
+      );
+      dispatch(setCompanyName(data.data));
+    } catch (error) {
+      dispatch(setError(error.response?.data?.message || error.message));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+export default AuditQuestionSlice.reducer;
