@@ -36,7 +36,7 @@ export const {
   setError,
   setAuditQuestion,
   setCompanyName,
-  setAuditOptions
+  setAuditOptions,
 } = AuditQuestionSlice.actions;
 
 export const createAuditName = (auditData) => async (dispatch) => {
@@ -69,11 +69,10 @@ export const fetchAuditQuestions =
         `${process.env.SERVER_URL}/master/get-audit-question?page=${page}&limit=${limit}`,
         { withCredentials: true }
       );
-      console.log("fetchAuditQuestion", data.data);
+      // console.log("fetchAuditQuestion", data.data);
       dispatch(setLoading(false));
       dispatch(setAuditQuestion(data.data));
       dispatch(setAuditOptions(data.data.options));
-
     } catch (error) {
       dispatch(setError(error.response?.data?.message || error.message));
       dispatch(setLoading(false));
@@ -163,36 +162,38 @@ export const updateCompanyLogo = (companyId, logoFile) => async (dispatch) => {
   }
 };
 
-export const createOptions = ({auditId, optionsData}) => async (dispatch) => {
-  dispatch(setLoading(true));
-  try {
-    console.log("the Redux audit Id is ", auditId);
-    const { data } = await axios.post(
-      `${process.env.SERVER_URL}/master/create-audit-option/${auditId}`,
-      optionsData,
-      { withCredentials: true }
-    );
-    dispatch(setMessage(data.message));
-  } catch (error) {
-    const errorMessage = error.response?.data?.message || error.message;
-    dispatch(setError(errorMessage));
-    throw new Error(errorMessage);
-  } finally {
-    dispatch(setLoading(false));
-  }
-};
-
+export const createOptions =
+  ({ auditId, optionsData }) =>
+  async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      // console.log("the Redux audit Id is ", auditId);
+      const { data } = await axios.post(
+        `${process.env.SERVER_URL}/master/create-audit-option/${auditId}`,
+        optionsData,
+        { withCredentials: true }
+      );
+      dispatch(setMessage(data.message));
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      dispatch(setError(errorMessage));
+      throw new Error(errorMessage);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
 export const fetchAuditOptions = (auditId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    console.log("the Redux audit Id is ", auditId);
-    const { data } = await axios.post(
+    // console.log("the Redux audit Id is ", auditId);
+    const { data } = await axios.get(
       `${process.env.SERVER_URL}/master/get-audit-option/${auditId}`,
-      optionsData,
       { withCredentials: true }
     );
-    dispatch(setAuditOptions(data.data))
+    // console.log("The auditOptions is ", data.data.options);
+
+    dispatch(setAuditOptions(data.data.options));
     dispatch(setMessage(data.message));
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message;
@@ -203,6 +204,59 @@ export const fetchAuditOptions = (auditId) => async (dispatch) => {
   }
 };
 
+export const deleteAuditOptions = (auditId, optionId) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    const { data } = await axios.delete(
+      `${process.env.SERVER_URL}/master/delete-audit-option/${auditId}/${optionId}`,
+      { withCredentials: true }
+    );
+    dispatch(setMessage(data.message));
+  } catch (error) {
+    const errorMessage = error.response?.data?.message || error.message;
+    dispatch(setError(errorMessage));
+    throw new Error(errorMessage);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+
+export const toggleIsPublished = (auditId) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    const { data } = await axios.get(
+      `${process.env.SERVER_URL}/master/toggle-audit-isPublished/${auditId}`,
+      { withCredentials: true }
+    );
+    // dispatch(setSelectedCompany(data.data));
+  } catch (error) {
+    dispatch(setError(error.response?.data?.message || error.message));
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+
+
+export const updateAuditOptions =
+  (postData, auditId, optionId) => async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      const { data } = await axios.patch(
+        `${process.env.SERVER_URL}/master/update-audit-option/${auditId}/${optionId}`,
+        postData,
+        { withCredentials: true }
+      );
+      dispatch(setMessage(data.message));
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message;
+      dispatch(setError(errorMessage));
+      throw new Error(errorMessage);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
 export const fetchCompaniesName =
   (page = 1, limit = 5) =>

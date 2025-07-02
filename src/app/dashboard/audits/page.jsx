@@ -40,6 +40,9 @@ import {
   updateAuditQuestion,
   createOptions,
   fetchAuditOptions,
+  deleteAuditOptions,
+  updateAuditOptions,
+  toggleIsPublished,
 } from "./store"; // <-- make sure update and delete actions exist
 import { fetchStoreName } from "../stores/store";
 import { DataTableDemo } from "./Datatable";
@@ -68,7 +71,7 @@ const AuditPage = () => {
   const dispatch = useDispatch();
   const { companies } = useSelector((state) => state.company);
   const { storesName } = useSelector((state) => state.store);
-  const { auditQuestion } = useSelector((state) => state.audit);
+  const { auditQuestion, auditOptions } = useSelector((state) => state.audit);
 
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
@@ -84,31 +87,8 @@ const AuditPage = () => {
   const [isFile, setIsFile] = useState(false);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async () => {
-    const responseOption = responseOptionText
-      .split(",")
-      .map((msg) => ({ message: msg.trim() }))
-      .filter((opt) => opt.message);
-
-    const payload = {
-      question,
-      responseType,
-      responseOption,
-      isVideo,
-      isPhoto,
-      isFile,
-      message,
-      score,
-    };
-
-    try {
-      await axios.post(`/your-api-route/${auditQuestionId}/options`, payload);
-      toast.success("Option created");
-    } catch (err) {
-      toast.error("Failed to create option");
-    }
-  };
+  const [isOptionEdit, setIsOptionEdit] = useState(false);
+  const [optionId, setOptionId] = useState("");
 
   useEffect(() => {
     dispatch(fetchStoreName());
@@ -132,15 +112,16 @@ const AuditPage = () => {
         // await dispatch(updateCompanyLogo(editingCompanyId, logoFile));
         setLogoFile(null);
         setLoading((prev) => !prev);
-        Swal.fire("Success", "Company updated successfully", "success");
-
+        // Swal.fire("Success", "Company updated successfully", "success");
+        toast.success("Company updated successfully");
         // Swal.fire("Success", "Logo updated successfully", "success");
       } else {
         await dispatch(
           createAuditName({ name: auditName, storeId: storeOption.value })
         );
         setLoading((prev) => !prev);
-        Swal.fire("Success", "Company created successfully", "success");
+        // Swal.fire("  Success", "Company created successfully", "success");
+        toast.success("Company created successfully");
       }
       // setCompanyName("");
       setAuditName("");
@@ -175,10 +156,53 @@ const AuditPage = () => {
         label: matchedCompany.label,
         value: matchedCompany.value,
       });
-      dispatch(fetchAuditOptions(company._id))
+      dispatch(fetchAuditOptions(company._id));
     } else {
       setStoreOption(null);
     }
+  };
+
+  const handleToggleIsPublished = async () => {
+    try {
+      await dispatch(toggleIsPublished(editingCompanyId));
+      toast.success("Options updated successfully");
+      setIsPublished((prev) => !prev);
+      setLoading((prev) => !prev);
+    } catch (error) {
+      toast.error("Error");
+    }
+  };
+
+  const handleReset = () => {
+    setQuestion(""),
+      setScore(""),
+      setResponseType(""),
+      setResponseOptionText(""),
+      setIsPhoto(false),
+      setIsFile(false),
+      setIsVideo(false),
+      setMessage("");
+    setOptionId("");
+    setIsOptionEdit(false);
+  };
+
+  const handleEditOptions = (options) => {
+    setQuestion(options.question);
+    setResponseType(options.responseType);
+    const responseMessages = options.responseOption
+      ?.map((opt) => opt.message)
+      .join(", ");
+
+    // console.log("the response Message is ", responseMessages);
+    setResponseOptionText(responseMessages);
+
+    setIsPhoto(options.isPhoto);
+    setIsVideo(options.isVideo);
+    setScore(options.score);
+    setIsFile(options.isFile);
+    setMessage(options.message);
+    setIsOptionEdit(true);
+    setOptionId(options._id);
   };
 
   const handleDeleteCompany = async (companyId) => {
@@ -206,68 +230,22 @@ const AuditPage = () => {
     }
   };
 
-  // const handleCreateOrUpdateOptions = async () => {
-  //   if (!auditName.trim()) {
-  //     return Swal.fire("Error", "Company name is required", "error");
-  //   }
-
-  //   try {
-  //     if (isEditing && editingCompanyId) {
-  //       await dispatch(
-  //         updateAuditQuestion(editingCompanyId, {
-  //           name: auditName,
-  //           storeId: storeOption.value,
-  //           isPublished: isPublished,
-  //         })
-  //       ); // corrected
-  //       // await dispatch(updateCompanyLogo(editingCompanyId, logoFile));
-  //       setLogoFile(null);
-  //       setLoading((prev) => !prev);
-  //       Swal.fire("Success", "Company updated successfully", "success");
-
-  //       // Swal.fire("Success", "Logo updated successfully", "success");
-  //     } else {
-  //       await dispatch(
-  //         createAuditName({ name: auditName, storeId: storeOption.value })
-  //       );
-  //       setLoading((prev) => !prev);
-  //       Swal.fire("Success", "Company created successfully", "success");
-  //     }
-  //     // setCompanyName("");
-  //     setAuditName("");
-  //     setStoreOption({
-  //       value: null,
-  //       label: "Select Store",
-  //     });
-  //     setNewItemDrawerOpen(false);
-  //     setIsEditing(false);
-  //     setEditingCompanyId(null);
-  //     // dispatch(fetchCompanies(page, limit)); // refresh
-  //   } catch (err) {
-  //     Swal.fire("Error", err.message || "Something went wrong", "error");
-  //   }
-  // };
-
-  const handleReset = () => {
-    setQuestion(""),
-      setScore(""),
-      setResponseType(""),
-      setResponseOptionText(""),
-      setIsPhoto(false),
-      setIsFile(false),
-      setIsVideo(false),
-      setMessage("");
-  };
-
   const handleCreateOrUpdateOptions = async () => {
-    if (isSubmitting) return; // prevent double click
-    setIsSubmitting(true);
+    if (!question.trim()) {
+      toast.error("Question name is required");
+      return;
+    }
+
+    if (!responseType.trim()) {
+      toast.error("Response Type  is required");
+      return;
+    }
 
     const postData = {
       question,
       score,
       responseType,
-      responseOptionText,
+      responseOption: responseOptionText,
       isVideo,
       isPhoto,
       isFile,
@@ -275,19 +253,63 @@ const AuditPage = () => {
     };
 
     try {
-      await dispatch(
-        createOptions({ auditId: editingCompanyId, optionsData: postData })
-      );
-      dispatch(fetchAuditOptions(editingCompanyId))
+      if (isOptionEdit && optionId) {
+        await dispatch(
+          updateAuditOptions(postData, editingCompanyId, optionId)
+        );
+
+        // setLogoFile(null);
+        // setLoading((prev) => !prev);
+        // Swal.fire("Success", "Company updated successfully", "success");
+        toast.success("Options updated successfully");
+
+        // Swal.fire("Success", "Logo updated successfully", "success");
+      } else {
+        await dispatch(
+          createOptions({ auditId: editingCompanyId, optionsData: postData })
+        );
+        toast.success("Options created successfully");
+      }
       handleReset();
-      toast.success("Options created successfully");
+
+      dispatch(fetchAuditOptions(editingCompanyId));
+
+      // dispatch(fetchCompanies(page, limit)); // refresh
     } catch (err) {
-      toast.error(err.message || "Something went wrong");
-    } finally {
-      setIsSubmitting(false);
+      Swal.fire("Error", err.message || "Something went wrong", "error");
     }
   };
 
+  // const handleCreateOrUpdateOptions = async () => {
+  //   if (isSubmitting) return; // prevent double click
+  //   setIsSubmitting(true);
+
+  //   const postData = {
+  //     question,
+  //     score,
+  //     responseType,
+  //     responseOptionText,
+  //     isVideo,
+  //     isPhoto,
+  //     isFile,
+  //     message,
+  //   };
+
+  //   try {
+  //     await dispatch(
+  //       createOptions({ auditId: editingCompanyId, optionsData: postData })
+  //     );
+  //     dispatch(fetchAuditOptions(editingCompanyId));
+  //     handleReset();
+  //     toast.success("Options created successfully");
+  //   } catch (err) {
+  //     toast.error(err.message || "Something went wrong");
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
+  // console.log("The audit Options is ", auditOptions);
   return (
     <div className="w-full my-4 px-8 py-3 ">
       <div className="flex justify-between items-center mb-4">
@@ -351,21 +373,21 @@ const AuditPage = () => {
 
                   {isEditing && (
                     <>
-                      <div className="flex items-center justify-between mt-6">
+                      {/* <div className="flex items-center justify-between mt-6">
                         <Label htmlFor="assigned">Assigned</Label>
                         <Switch
                           id="assigned"
                           checked={isAssigned}
                           onCheckedChange={setIsAssigned}
                         />
-                      </div>
+                      </div> */}
 
                       <div className="flex items-center justify-between mt-4">
                         <Label htmlFor="published">Published</Label>
                         <Switch
                           id="published"
                           checked={isPublished}
-                          onCheckedChange={setIsPublished}
+                          onCheckedChange={handleToggleIsPublished}
                         />
                       </div>
                     </>
@@ -460,20 +482,26 @@ const AuditPage = () => {
                         placeholder="Custom message (optional)"
                       />
                     </div>
-
-                    <Button
-                      onClick={handleCreateOrUpdateOptions}
-                      disabled={isSubmitting}
-                      className="mt-4"
-                    >
-                      {isSubmitting ? "Saving..." : "Create Option"}
-                    </Button>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleCreateOrUpdateOptions}
+                        className="mt-4"
+                      >
+                        {isOptionEdit ? "Update Option" : "Create Option"}
+                      </Button>
+                      {isOptionEdit && (
+                        <Button onClick={handleReset} className="mt-4">
+                          Cancel
+                        </Button>
+                      )}
+                    </div>
                   </div>
                   <div className="p-4 w-full">
                     <OptionsDataTable
-                      data={auditQuestion?.auditQuestions.options || []}
-                      onEdit={handleEditCompany}
+                      data={auditOptions || []}
+                      onEditOptions={handleEditOptions}
                       onDelete={handleDeleteCompany}
+                      companyId={editingCompanyId}
                     />
                   </div>
                 </div>
