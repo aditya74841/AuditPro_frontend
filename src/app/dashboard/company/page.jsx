@@ -47,6 +47,9 @@ const CompanyPage = () => {
   const [limit] = useState(5);
   const [logoFile, setLogoFile] = useState(null);
   const [changingLogoCompanyId, setChangingLogoCompanyId] = useState(null);
+
+  const [imageURl, setImageURL] = useState("");
+
   useEffect(() => {
     dispatch(fetchCompanies(page, limit));
   }, [page, limit, dispatch]);
@@ -82,6 +85,7 @@ const CompanyPage = () => {
   const handleEditCompany = (company) => {
     setCompanyName(company.name);
     setEditingCompanyId(company._id);
+    setImageURL(company.logo.url);
     setIsEditing(true);
     setNewItemDrawerOpen(true);
   };
@@ -109,7 +113,7 @@ const CompanyPage = () => {
       }
     }
   };
-
+  // console.log("the Image url is ", imageURl);
   return (
     <div className="w-full my-4 px-8 py-3">
       <div className="flex justify-between items-center mb-4">
@@ -121,56 +125,93 @@ const CompanyPage = () => {
               className="bg-sky-700 hover:bg-sky-800"
               onClick={() => {
                 setIsEditing(false);
+                setCompanyName("");
+                setImageURL("");
               }}
             >
               + Add Company
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-[800px] sm:w-[640px] bg-white">
-            <SheetHeader>
-              <SheetTitle>
+          <SheetContent className="w-full max-w-xl sm:w-[640px] bg-white shadow-xl rounded-lg">
+            <SheetHeader className="px-6 pt-6">
+              <SheetTitle className="text-2xl font-semibold text-gray-800">
                 {isEditing ? "Edit Company" : "Add Company"}
               </SheetTitle>
-              <SheetDescription>
+              <SheetDescription className="text-gray-500">
                 {isEditing ? "Update company details" : "Create a new company"}
               </SheetDescription>
             </SheetHeader>
 
-            <div className="items-center p-4">
-              <Label htmlFor="name">Company Name</Label>
-              <Input
-                id="name"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="Enter company name"
-                className="mt-2"
-              />
+            <div className="px-6 py-4 space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-gray-700 font-medium">
+                  Company Name
+                </Label>
+                <Input
+                  id="name"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  placeholder="Enter company name"
+                  className="focus-visible:ring-2 focus-visible:ring-sky-500"
+                />
+              </div>
 
               {isEditing && (
-                <>
-                  <Label htmlFor="logo" className="mt-4">
+                <div className="space-y-3">
+                  <Label htmlFor="logo" className="text-gray-700 font-medium">
                     Company Logo
                   </Label>
-                  <Input
-                    id="logo"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setLogoFile(e.target.files[0])}
-                    className="border p-2 w-full mt-2"
-                  />
-                  {logoFile && (
-                    <p className="text-sm text-gray-500 mt-2">
-                      Selected: {logoFile.name}
-                    </p>
-                  )}
-                </>
+
+                  <div className="flex items-center gap-4">
+                    {/* Custom styled upload button */}
+                    <label
+                      htmlFor="logo"
+                      className="cursor-pointer px-4 py-2 bg-sky-600 text-white text-sm rounded-md shadow hover:bg-sky-700 transition"
+                    >
+                      Upload Logo
+                      <input
+                        id="logo"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          setLogoFile(e.target.files[0]);
+                          setImageURL("");
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+
+                    {/* File name or preview */}
+                    {(logoFile || imageURl) && (
+                      <div className="flex items-center gap-3">
+                        {/* Thumbnail preview */}
+                        <img
+                          src={
+                            imageURl ? imageURl : URL.createObjectURL(logoFile)
+                          }
+                          alt="Preview"
+                          className="w-10 h-10 object-cover rounded border"
+                        />
+                        {!imageURl && (
+                          <span className="text-sm text-gray-600 line-clamp-1 max-w-[150px]">
+                            {logoFile.name}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
 
-            <SheetFooter>
+            <SheetFooter className="px-6 pb-6">
               <SheetClose asChild>
-                <Button type="button" onClick={handleCreateOrUpdateCompany}>
-                  Save changes
+                <Button
+                  type="button"
+                  onClick={handleCreateOrUpdateCompany}
+                  className="w-full bg-sky-700 hover:bg-sky-800 transition-colors"
+                >
+                  Save Changes
                 </Button>
               </SheetClose>
             </SheetFooter>

@@ -10,6 +10,7 @@ const nextConfig = {
     USER_SERVER_URL: "http://localhost:8080/api/v1/users",
     COMPANY_SERVER_URL: "http://localhost:8080/api/v1",
     NEXT_PUBLIC_COMPANY_SERVER_URL: "http://localhost:8080/api/v1",
+    NEXT_PUBLIC_SERVER_URL: "http://localhost:8080/api/v1",
     SERVER_URL: "http://localhost:8080/api/v1",
   },
 };

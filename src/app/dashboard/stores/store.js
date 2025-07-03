@@ -119,7 +119,7 @@ export const deleteStore = (storeId) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
     const { data } = await axios.delete(
-      `${process.env.NEXT_PUBLIC_STORE_SERVER_URL}/store/${storeId}`,
+      `${process.env.SERVER_URL}/store/${storeId}`,
       { withCredentials: true }
     );
     dispatch(setMessage(data.message));

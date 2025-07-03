@@ -5,23 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import Select from "react-select";
 
-import { Check, ChevronsUpDown } from "lucide-react";
-
-import { cn } from "@/lib/utils";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -81,12 +64,6 @@ const StorePage = () => {
   });
 
   const { profile, isLoggedIn } = useSelector((state) => state.auth);
-
-  // useEffect(() => {
-  //   if (selectedCompanyOption?.value) {
-  //     dispatch(getStoresBasedOnCompany(selectedCompanyOption.value));
-  //   }
-  // }, [selectedCompanyOption, dispatch]);
 
   useEffect(() => {
     dispatch(fetchCompaniesName());
@@ -197,31 +174,13 @@ const StorePage = () => {
     setIsEditing(true);
     setNewItemDrawerOpen(true);
   };
-
-  const handleDeleteStore = async (storeId) => {
-    // const confirm = await Swal.fire({
-    //   title: "Are you sure?",
-    //   text: "This will delete the store permanently!",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   confirmButtonColor: "#d33",
-    //   cancelButtonColor: "#3085d6",
-    //   confirmButtonText: "Yes, delete it!",
-    // });
-    // if (confirm.isConfirmed) {
-    //   try {
-    //     await dispatch(deleteStore(storeId));
-    //     Swal.fire("Deleted!", "Store has been deleted.", "success");
-    //     setIsEditing(false);
-    //     setLogoFile(null);
-    //     dispatch(fetchStores(page, limit));
-    //   } catch (err) {
-    //     Swal.fire("Error", err.message || "Something went wrong", "error");
-    //   }
-    // }
+  const handleDeleteStore = () => {};
+  const handleReset = () => {
+    setName("");
+    setEmail("");
+    setPhoneNumber("");
+    setPassword("");
   };
-  // console.log("The value Name is ", value);
-
   return (
     <div className="w-full my-4 px-8 py-3">
       <div className="flex justify-between items-center mb-4">
@@ -242,76 +201,109 @@ const StorePage = () => {
         <Sheet open={newItemDrawerOpen} onOpenChange={setNewItemDrawerOpen}>
           <SheetTrigger asChild>
             <Button
-              className="bg-sky-700 hover:bg-sky-800"
+              className="bg-sky-700 hover:bg-sky-800 transition-all font-medium tracking-wide"
               onClick={() => {
                 setIsEditing(false);
+                handleReset();
               }}
             >
               + Add Staff
             </Button>
           </SheetTrigger>
-          <SheetContent className="w-[800px] sm:w-[640px] bg-white">
-            <SheetHeader>
-              <SheetTitle>{isEditing ? "Edit Staff" : "Add Staff"}</SheetTitle>
-              <SheetDescription>
-                {isEditing ? "Update staff details" : "Create a new staff"}
+
+          <SheetContent className="w-full sm:w-[640px] md:w-[800px] bg-white overflow-y-auto">
+            <SheetHeader className="border-b pb-4">
+              <SheetTitle className="text-2xl font-semibold text-gray-800">
+                {isEditing ? "Edit Staff" : "Add Staff"}
+              </SheetTitle>
+              <SheetDescription className="text-sm text-gray-500">
+                {isEditing
+                  ? "Update staff details and contact information"
+                  : "Enter staff details to create a new team member."}
               </SheetDescription>
             </SheetHeader>
 
-            <div className="items-center p-4">
-              <Label htmlFor="name" className="text-lg mt-4">
-                {" "}
-                Name
-              </Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter  name"
-                className="mt-2"
-              />
-              <Label htmlFor="email" className="text-lg mt-4">
-                {" "}
-                Email
-              </Label>
-              <Input
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email"
-                className="mt-2"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+              {/* Name */}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="name"
+                  className="text-gray-700 text-sm font-medium"
+                >
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter full name"
+                  className="border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500"
+                />
+              </div>
+
+              {/* Email */}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="email"
+                  className="text-gray-700 text-sm font-medium"
+                >
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter email address"
+                  className="border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500"
+                />
+              </div>
+
+              {/* Password */}
               {!isEditing && (
-                <>
-                  <Label htmlFor="password" className="text-lg mt-4">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="password"
+                    className="text-gray-700 text-sm font-medium"
+                  >
                     Password
                   </Label>
                   <Input
                     id="password"
+                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter Password"
-                    className="mt-2"
+                    placeholder="Create a password"
+                    className="border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500"
                   />
-                </>
+                </div>
               )}
 
-              <Label htmlFor="phonenumber" className="text-lg mt-4">
-                Phone Number
-              </Label>
-              <Input
-                id="phonenumber"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="Enter Phone Number"
-                className="mt-2"
-              />
+              {/* Phone Number */}
+              <div className="space-y-2">
+                <Label
+                  htmlFor="phonenumber"
+                  className="text-gray-700 text-sm font-medium"
+                >
+                  Phone Number
+                </Label>
+                <Input
+                  id="phonenumber"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  placeholder="Enter phone number"
+                  className="border-gray-300 rounded-md focus:ring-sky-500 focus:border-sky-500"
+                />
+              </div>
             </div>
 
-            <SheetFooter>
+            <SheetFooter className="border-t px-6 py-4 mt-auto">
               <SheetClose asChild>
-                <Button type="button" onClick={handleCreateOrUpdateStore}>
-                  Save changes
+                <Button
+                  type="button"
+                  onClick={handleCreateOrUpdateStore}
+                  className="bg-sky-700 hover:bg-sky-800 text-white font-semibold px-6 py-2 rounded-md transition"
+                >
+                  Save Changes
                 </Button>
               </SheetClose>
             </SheetFooter>

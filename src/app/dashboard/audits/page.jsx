@@ -280,6 +280,7 @@ const AuditPage = () => {
     }
   };
 
+  // console.lo g("Audit Options is ",auditOptions)
   // const handleCreateOrUpdateOptions = async () => {
   //   if (isSubmitting) return; // prevent double click
   //   setIsSubmitting(true);
@@ -340,169 +341,224 @@ const AuditPage = () => {
 
             <Tabs defaultValue="first" className="w-full p-4">
               {isEditing && (
-                <>
-                  <TabsList className="p-4">
-                    <TabsTrigger value="first">First</TabsTrigger>
-                    <TabsTrigger value="second">Second</TabsTrigger>
-                  </TabsList>
-                </>
+                <div className="p-4">
+                  <div className="bg-gray-100 dark:bg-gray-900 p-2 rounded-xl shadow-sm w-fit ">
+                    <TabsList className="flex gap-2">
+                      <TabsTrigger
+                        value="first"
+                        className="px-5 py-2 rounded-lg text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-white transition-all"
+                      >
+                        First
+                      </TabsTrigger>
+                      <TabsTrigger
+                        value="second"
+                        className="px-5 py-2 rounded-lg text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-white transition-all"
+                      >
+                        Second
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
+                </div>
               )}
 
-              <TabsContent value="first" className="w-1/2">
-                <div className="items-center p-4">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    value={auditName}
-                    onChange={(e) => setAuditName(e.target.value)}
-                    placeholder="Enter Audit name"
-                    className="mt-2"
-                  />
+              <TabsContent value="first" className="w-full lg:w-1/2">
+                <div className="bg-white dark:bg-gray-900 border rounded-2xl shadow-md p-6 space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-base font-semibold">
+                      Audit Name
+                    </Label>
+                    <Input
+                      id="name"
+                      value={auditName}
+                      onChange={(e) => setAuditName(e.target.value)}
+                      placeholder="Enter Audit name"
+                      className="mt-1"
+                    />
+                  </div>
 
-                  <Label htmlFor="name" className="text-lg mt-4">
-                    Select Store
-                  </Label>
-                  <Select
-                    // defaultValue={selectedOption}
-                    // onChange={setSelectedOption}
-                    // options={companiesName}
-                    value={storeOption}
-                    onChange={setStoreOption}
-                    options={storesName}
-                  />
+                  <div className="space-y-2">
+                    <Label htmlFor="store" className="text-base font-semibold">
+                      Select Store
+                    </Label>
+                    <Select
+                      id="store"
+                      value={storeOption}
+                      onChange={setStoreOption}
+                      options={storesName}
+                      placeholder="Choose a store"
+                    />
+                  </div>
 
                   {isEditing && (
-                    <>
-                      {/* <div className="flex items-center justify-between mt-6">
-                        <Label htmlFor="assigned">Assigned</Label>
-                        <Switch
-                          id="assigned"
-                          checked={isAssigned}
-                          onCheckedChange={setIsAssigned}
-                        />
-                      </div> */}
+                    <div className="space-y-4 pt-2">
+                      {/* Uncomment if needed
+        <div className="flex items-center justify-between">
+          <Label htmlFor="assigned" className="font-medium">
+            Assigned
+          </Label>
+          <Switch
+            id="assigned"
+            checked={isAssigned}
+            onCheckedChange={setIsAssigned}
+          />
+        </div>
+        */}
 
-                      <div className="flex items-center justify-between mt-4">
-                        <Label htmlFor="published">Published</Label>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor="published" className="font-medium">
+                          Published
+                        </Label>
                         <Switch
                           id="published"
                           checked={isPublished}
                           onCheckedChange={handleToggleIsPublished}
                         />
                       </div>
-                    </>
+                    </div>
                   )}
                 </div>
               </TabsContent>
+
               <TabsContent value="second">
-                <div className="flex">
-                  <div className="grid gap-4 w-1/2  ">
-                    <div>
-                      <Label htmlFor="question">Question</Label>
-                      <Input
-                        id="question"
-                        value={question}
-                        onChange={(e) => setQuestion(e.target.value)}
-                        placeholder="Enter the audit question"
-                      />
-                    </div>
+                <div className="flex flex-col lg:flex-row gap-6 p-4">
+                  {/* Form Section */}
+                  <div className="w-full lg:w-1/2 bg-white p-6 rounded-2xl shadow-md border space-y-5">
+                    <h2 className="text-xl font-semibold mb-2">
+                      Audit Option Details
+                    </h2>
 
-                    <div>
-                      <Label htmlFor="score">Score</Label>
-                      <Input
-                        id="score"
-                        type="number"
-                        value={score}
-                        onChange={(e) => setScore(Number(e.target.value))}
-                        placeholder="Score (e.g. 10)"
-                      />
-                    </div>
-
-                    <div>
-                      <Label htmlFor="responseType">Response Type</Label>
-                      <Select
-                        id="responseType"
-                        options={responseTypeOptions}
-                        value={responseTypeOptions.find(
-                          (opt) => opt.value === responseType
-                        )}
-                        onChange={(selected) => setResponseType(selected.value)}
-                        placeholder="Select response type"
-                      />
-                    </div>
-
-                    {(responseType === "radio" ||
-                      responseType === "checkbox") && (
+                    <div className="space-y-3">
                       <div>
-                        <Label htmlFor="responseOption">Response Options</Label>
-                        <Textarea
-                          id="responseOption"
-                          value={responseOptionText}
-                          onChange={(e) =>
-                            setResponseOptionText(e.target.value)
-                          }
-                          placeholder="Enter options separated by commas"
+                        <Label htmlFor="question">Question</Label>
+                        <Input
+                          id="question"
+                          value={question}
+                          onChange={(e) => setQuestion(e.target.value)}
+                          placeholder="Enter the audit question"
+                          className="mt-1"
                         />
                       </div>
-                    )}
 
-                    <div className="flex items-center gap-4">
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          id="video"
-                          checked={isVideo}
-                          onCheckedChange={setIsVideo}
+                      <div>
+                        <Label htmlFor="score">Score</Label>
+                        <Input
+                          id="score"
+                          type="number"
+                          value={score}
+                          onChange={(e) => setScore(Number(e.target.value))}
+                          placeholder="Score (e.g. 10)"
+                          className="mt-1"
                         />
-                        <Label htmlFor="video">Video</Label>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          id="photo"
-                          checked={isPhoto}
-                          onCheckedChange={setIsPhoto}
-                        />
-                        <Label htmlFor="photo">Photo</Label>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          id="file"
-                          checked={isFile}
-                          onCheckedChange={setIsFile}
-                        />
-                        <Label htmlFor="file">File</Label>
-                      </div>
-                    </div>
 
-                    <div>
-                      <Label htmlFor="message">Message</Label>
-                      <Textarea
-                        id="message"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Custom message (optional)"
-                      />
-                    </div>
-                    <div className="flex gap-3">
-                      <Button
-                        onClick={handleCreateOrUpdateOptions}
-                        className="mt-4"
-                      >
-                        {isOptionEdit ? "Update Option" : "Create Option"}
-                      </Button>
-                      {isOptionEdit && (
-                        <Button onClick={handleReset} className="mt-4">
-                          Cancel
-                        </Button>
+                      <div>
+                        <Label htmlFor="responseType">Response Type</Label>
+                        <div className="mt-1">
+                          <Select
+                            id="responseType"
+                            options={responseTypeOptions}
+                            value={responseTypeOptions.find(
+                              (opt) => opt.value === responseType
+                            )}
+                            onChange={(selected) =>
+                              setResponseType(selected.value)
+                            }
+                            placeholder="Select response type"
+                          />
+                        </div>
+                      </div>
+
+                      {(responseType === "radio" ||
+                        responseType === "checkbox") && (
+                        <div>
+                          <Label htmlFor="responseOption">
+                            Response Options
+                          </Label>
+                          <Textarea
+                            id="responseOption"
+                            value={responseOptionText}
+                            onChange={(e) =>
+                              setResponseOptionText(e.target.value)
+                            }
+                            placeholder="Enter options separated by commas"
+                            className="mt-1"
+                          />
+                        </div>
                       )}
+
+                      <div>
+                        <Label htmlFor="message">Message</Label>
+                        <Textarea
+                          id="message"
+                          value={message}
+                          onChange={(e) => setMessage(e.target.value)}
+                          placeholder="Custom message (optional)"
+                          className="mt-1"
+                        />
+                      </div>
+
+                      <div className="flex items-center gap-6 mt-4">
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="video"
+                            checked={isVideo}
+                            onCheckedChange={setIsVideo}
+                          />
+                          <Label htmlFor="video">Video</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="photo"
+                            checked={isPhoto}
+                            onCheckedChange={setIsPhoto}
+                          />
+                          <Label htmlFor="photo">Photo</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id="file"
+                            checked={isFile}
+                            onCheckedChange={setIsFile}
+                          />
+                          <Label htmlFor="file">File</Label>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 pt-4">
+                        <Button
+                          onClick={handleCreateOrUpdateOptions}
+                          className="flex-1"
+                        >
+                          {isOptionEdit ? "Update Option" : "Create Option"}
+                        </Button>
+
+                        {isOptionEdit && (
+                          <Button
+                            variant="outline"
+                            onClick={handleReset}
+                            className="flex-1 border-gray-300"
+                          >
+                            Cancel
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div className="p-4 w-full">
-                    <OptionsDataTable
-                      data={auditOptions || []}
-                      onEditOptions={handleEditOptions}
-                      onDelete={handleDeleteCompany}
-                      companyId={editingCompanyId}
-                    />
+
+                  {/* Table Section */}
+                  <div className="w-full lg:w-1/2 bg-white p-6 rounded-2xl shadow-md border flex flex-col">
+                    <h2 className="text-xl font-semibold mb-4">
+                      Audit Options List
+                    </h2>
+
+                    <div className="flex-1 overflow-y-auto max-h-[500px] pr-2">
+                      <OptionsDataTable
+                        data={auditOptions || []}
+                        onEditOptions={handleEditOptions}
+                        onDelete={handleDeleteCompany}
+                        companyId={editingCompanyId}
+                      />
+                    </div>
                   </div>
                 </div>
               </TabsContent>
