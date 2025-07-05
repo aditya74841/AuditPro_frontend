@@ -164,6 +164,28 @@ export const handleLogout = (callback) => async (dispatch) => {
   }
 };
 
+export const uploadAvatar = (formData, callback) => async (dispatch) => {
+  dispatch(setLoading(true));
+  try {
+    const response = await axios.patch(
+      `${process.env.USER_SERVER_URL}/avatar`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
+
+    dispatch(setLoading(false));
+    if (callback) callback(null, response.data);
+  } catch (error) {
+    dispatch(setLoading(false));
+    if (callback) callback(error, null);
+  }
+};
+
 // Function To handle forgotpassword method
 
 export const sendForgetPasswordMail =
