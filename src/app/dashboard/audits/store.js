@@ -60,7 +60,7 @@ export const createAuditName = (auditData) => async (dispatch) => {
 
 // Get All Companies
 export const fetchAuditQuestions =
-  (page = 1, limit = 5) =>
+  (page = 1, limit = 10) =>
   async (dispatch) => {
     dispatch(setLoading(true));
     try {
