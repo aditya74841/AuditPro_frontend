@@ -75,11 +75,11 @@ const ResponsePage = () => {
       )}
 
       {/* Error state */}
-      {error && (
-        <div className="text-center py-10 text-red-600">
-          Error loading audit: {error}
-        </div>
-      )}
+        {/* {error && (
+          <div className="text-center py-10 text-red-600">
+            Error loading audit: {error}
+          </div>
+        )} */}
 
       {/* Question card or finish screen */}
       {selectedAuditId && !loading && questions.length > 0 && (

@@ -1,73 +1,45 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const ResponseCard = ({ option, onSubmit, questionId, storeId }) => {
   const [textAnswer, setTextAnswer] = useState("");
   const [selectedOption, setSelectedOption] = useState(null);
-  const [media, setMedia] = useState({ photo: null, video: null, file: null });
+  const [media, setMedia] = useState({ photos: [], video: null, files: [] });
   const [submitting, setSubmitting] = useState(false);
 
+  // Handle multiple/single file changes
   const handleMediaChange = (e, type) => {
-    setMedia({ ...media, [type]: e.target.files[0] });
+    if (type === "photos" || type === "files") {
+      setMedia((prev) => ({ ...prev, [type]: Array.from(e.target.files) }));
+    } else {
+      setMedia((prev) => ({ ...prev, [type]: e.target.files[0] }));
+    }
   };
 
+  // Validation for required fields and media
+  const isTextValid = option.responseType !== "text" || textAnswer.trim().length > 0;
+  const isRadioValid = option.responseType !== "radio" || !!selectedOption;
+  const isPhotoValid = !option.isPhoto || (media.photos && media.photos.length > 0);
+  const isFileValid = !option.isFile || (media.files && media.files.length > 0);
+  const isVideoValid = !option.isVideo || !!media.video;
 
-  // const handleSubmit = async () => {
-  //   const isTextEmpty = option.responseType === "text" && !textAnswer.trim();
-  //   const isRadioEmpty = option.responseType === "radio" && !selectedOption;
-
-  //   if (isTextEmpty || isRadioEmpty) {
-  //     alert("Please fill in the required response before submitting.");
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append("questionId", option._id);
-  //   formData.append("responseType", option.responseType);
-  //   formData.append(
-  //     "answer",
-  //     option.responseType === "radio" ? selectedOption : textAnswer
-  //   );
-
-  //   if (media.photo) formData.append("photo", media.photo);
-  //   if (media.video) formData.append("video", media.video);
-  //   if (media.file) formData.append("file", media.file);
-
-  //   try {
-  //     setSubmitting(true);
-  //     const res = await axios.post(`${process.env.SERVER_URL}/master/audit-response`, formData, {
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
-  //       withCredentials:true
-  //     });
-
-  //     console.log("Response saved:", res.data);
-  //     alert("Response submitted successfully!");
-  //     onSubmit(); // Notify parent to go to next
-  //   } catch (error) {
-  //     console.error("Submission error:", error);
-  //     alert("Error submitting response.");
-  //   } finally {
-  //     setSubmitting(false);
-  //   }
-  // };
+  const isFormValid = isTextValid && isRadioValid && isPhotoValid && isFileValid && isVideoValid;
 
   const handleSubmit = async () => {
-    const isTextEmpty = option.responseType === "text" && !textAnswer.trim();
-    const isRadioEmpty = option.responseType === "radio" && !selectedOption;
-
-    if (isTextEmpty || isRadioEmpty) {
-      alert("Please fill in the required response before submitting.");
+    if (!isFormValid) {
+      if (!isTextValid) toast.error("Please enter your answer.");
+      else if (!isRadioValid) toast.error("Please select an option.");
+      else if (!isPhotoValid) toast.error("Please upload at least one photo.");
+      else if (!isFileValid) toast.error("Please upload at least one file.");
+      else if (!isVideoValid) toast.error("Please upload a video.");
       return;
     }
 
     const formData = new FormData();
-
     formData.append("questions", option.question);
-    // formData.append("questions", option.question);
-
     formData.append("optionId", option._id);
     formData.append("responseType", option.responseType);
     formData.append(
@@ -77,28 +49,26 @@ export const ResponseCard = ({ option, onSubmit, questionId, storeId }) => {
     formData.append("store", storeId);
     formData.append("auditQuestionId", questionId);
 
-    // 👇 Append multiple files
-    if (Array.isArray(media.photos)) {
+    // Append multiple photos
+    if (media.photos && media.photos.length > 0) {
       media.photos.forEach((photo) => {
-        formData.append("photos", photo); // name must match multer config
+        formData.append("photos", photo);
       });
     }
-
-    if (Array.isArray(media.files)) {
+    // Append multiple files
+    if (media.files && media.files.length > 0) {
       media.files.forEach((file) => {
-        formData.append("files", file); // name must match multer config
+        formData.append("files", file);
       });
     }
-
-    // 👇 Append single video
+    // Append single video
     if (media.video) {
-      formData.append("video", media.video); // multer allows only one
+      formData.append("video", media.video);
     }
 
     try {
       setSubmitting(true);
-
-      const res = await axios.post(
+      await axios.post(
         `${process.env.SERVER_URL}/master/audit-response`,
         formData,
         {
@@ -108,23 +78,21 @@ export const ResponseCard = ({ option, onSubmit, questionId, storeId }) => {
           withCredentials: true,
         }
       );
-
-      console.log("Response saved:", res.data);
-      alert("Response submitted successfully!");
-      onSubmit(); // Notify parent to go to next
+      toast.success("Response submitted successfully!");
+      setTimeout(() => onSubmit(), 1200); // Give user time to see toast
     } catch (error) {
-      console.error("Submission error:", error?.response?.data || error);
-      alert("Error submitting response.");
+      toast.error("Error submitting response.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow border space-y-4 w-full">
-      <h3 className="font-bold text-lg text-blue-900">{option.question}</h3>
+    <div className="bg-white p-7 rounded-2xl shadow-lg border space-y-6 w-full max-w-2xl mx-auto">
+      <ToastContainer position="top-center" autoClose={2000} hideProgressBar={false} newestOnTop closeOnClick pauseOnFocusLoss draggable pauseOnHover />
+      <h3 className="font-bold text-2xl text-blue-900 mb-2">{option.question}</h3>
       {option.message && (
-        <p className="text-sm italic text-gray-600">{option.message}</p>
+        <p className="text-base italic text-gray-600 mb-2">{option.message}</p>
       )}
 
       {option.responseType === "radio" && (
@@ -132,18 +100,19 @@ export const ResponseCard = ({ option, onSubmit, questionId, storeId }) => {
           {option.responseOption.map((res) => (
             <label
               key={res._id}
-              className="flex items-center space-x-2 cursor-pointer"
+              className={`flex items-center space-x-2 cursor-pointer p-2 rounded transition-colors duration-150 ${selectedOption === res.message ? "bg-blue-50" : "hover:bg-gray-50"}`}
             >
               <input
                 type="radio"
-                checked={selectedOption === res.message} // ✅ Compare with message
-                onChange={() => setSelectedOption(res.message)} // ✅ Store message
+                checked={selectedOption === res.message}
+                onChange={() => setSelectedOption(res.message)}
+                className="accent-blue-600"
               />
               <span
                 className={
                   selectedOption === res.message
                     ? "font-medium text-blue-700"
-                    : ""
+                    : "text-gray-800"
                 }
               >
                 {res.message}
@@ -155,7 +124,7 @@ export const ResponseCard = ({ option, onSubmit, questionId, storeId }) => {
 
       {option.responseType === "text" && (
         <textarea
-          className="w-full p-2 border rounded"
+          className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200 text-base"
           rows="3"
           placeholder="Type your answer..."
           value={textAnswer}
@@ -163,48 +132,61 @@ export const ResponseCard = ({ option, onSubmit, questionId, storeId }) => {
         />
       )}
 
-      <div className="space-y-3">
+      <div className="space-y-4 mt-4">
         {option.isPhoto && (
           <div>
-            <label className="block font-medium mb-1">Upload Photo</label>
+            <label className="block font-semibold mb-1 text-blue-800">
+              Upload Photos <span className="text-red-500">*</span>
+            </label>
             <input
               type="file"
               multiple
               accept="image/*"
-              onChange={(e) =>
-                setMedia({ ...media, photos: [...e.target.files] })
-              }
+              onChange={(e) => handleMediaChange(e, "photos")}
+              className="block w-full text-sm text-gray-700 border border-gray-300 rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
             />
-            {media.photo && (
-              <p className="text-sm text-gray-500 mt-1">
-                Selected: {media.photo.name}
-              </p>
+            {media.photos && media.photos.length > 0 && (
+              <ul className="text-xs text-gray-600 mt-2 list-disc list-inside">
+                {media.photos.map((file, idx) => (
+                  <li key={idx}>{file.name}</li>
+                ))}
+              </ul>
             )}
           </div>
         )}
         {option.isVideo && (
           <div>
-            <label className="block font-medium mb-1">Upload Video</label>
+            <label className="block font-semibold mb-1 text-blue-800">
+              Upload Video <span className="text-red-500">*</span>
+            </label>
             <input
               type="file"
               accept="video/*"
               onChange={(e) => handleMediaChange(e, "video")}
+              className="block w-full text-sm text-gray-700 border border-gray-300 rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
             />
             {media.video && (
-              <p className="text-sm text-gray-500 mt-1">
-                Selected: {media.video.name}
-              </p>
+              <p className="text-xs text-gray-600 mt-2">Selected: {media.video.name}</p>
             )}
           </div>
         )}
         {option.isFile && (
           <div>
-            <label className="block font-medium mb-1">Upload File</label>
-            <input type="file" onChange={(e) => handleMediaChange(e, "file")} />
-            {media.file && (
-              <p className="text-sm text-gray-500 mt-1">
-                Selected: {media.file.name}
-              </p>
+            <label className="block font-semibold mb-1 text-blue-800">
+              Upload Files <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="file"
+              multiple
+              onChange={(e) => handleMediaChange(e, "files")}
+              className="block w-full text-sm text-gray-700 border border-gray-300 rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+            {media.files && media.files.length > 0 && (
+              <ul className="text-xs text-gray-600 mt-2 list-disc list-inside">
+                {media.files.map((file, idx) => (
+                  <li key={idx}>{file.name}</li>
+                ))}
+              </ul>
             )}
           </div>
         )}
@@ -212,259 +194,22 @@ export const ResponseCard = ({ option, onSubmit, questionId, storeId }) => {
 
       <button
         onClick={handleSubmit}
-        disabled={submitting}
-        className={`mt-2 ${
-          submitting ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-        } text-white font-semibold px-5 py-2 rounded`}
+        disabled={submitting || !isFormValid}
+        className={`mt-6 w-full transition-colors duration-200 ${
+          submitting || !isFormValid
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900"
+        } text-white font-bold px-5 py-2 rounded shadow-lg`}
       >
-        {submitting ? "Submitting..." : "Submit"}
+        {submitting ? (
+          <span className="flex items-center justify-center">
+            <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+            Submitting...
+          </span>
+        ) : (
+          "Submit"
+        )}
       </button>
     </div>
-
-    // <div className="bg-white p-5 rounded-xl shadow border space-y-4 w-full">
-    //   <h3 className="font-bold text-lg text-blue-900">{option.question}</h3>
-    //   {option.message && (
-    //     <p className="text-sm italic text-gray-600">{option.message}</p>
-    //   )}
-
-    //   {option.responseType === "radio" && (
-    //     <div className="space-y-2">
-    //       {option.responseOption.map((res) => (
-    //         <label
-    //           key={res._id}
-    //           className="flex items-center space-x-2 cursor-pointer"
-    //         >
-    //           <input
-    //             type="radio"
-    //             checked={selectedOption === res._id}
-    //             onChange={() => setSelectedOption(res._id)}
-    //           />
-    //           <span
-    //             className={
-    //               selectedOption === res._id ? "font-medium text-blue-700" : ""
-    //             }
-    //           >
-    //             {res.message}
-    //           </span>
-    //         </label>
-    //       ))}
-    //     </div>
-    //   )}
-
-    //   {option.responseType === "text" && (
-    //     <textarea
-    //       className="w-full p-2 border rounded"
-    //       rows="3"
-    //       placeholder="Type your answer..."
-    //       value={textAnswer}
-    //       onChange={(e) => setTextAnswer(e.target.value)}
-    //     />
-    //   )}
-
-    //   <div className="space-y-3">
-    //     {option.isPhoto && (
-    //       <div>
-    //         <label className="block font-medium mb-1">Upload Photos</label>
-    //         <input
-    //           type="file"
-    //           multiple
-    //           accept="image/*"
-    //           onChange={(e) =>
-    //             setMedia((prev) => ({ ...prev, photos: [...e.target.files] }))
-    //           }
-    //         />
-    //         {media.photos?.length > 0 && (
-    //           <ul className="text-sm text-gray-500 mt-1 list-disc list-inside">
-    //             {media.photos.map((file, index) => (
-    //               <li key={index}>{file.name}</li>
-    //             ))}
-    //           </ul>
-    //         )}
-    //       </div>
-    //     )}
-
-    //     {option.isVideo && (
-    //       <div>
-    //         <label className="block font-medium mb-1">Upload Video</label>
-    //         <input
-    //           type="file"
-    //           accept="video/*"
-    //           onChange={(e) =>
-    //             setMedia((prev) => ({ ...prev, video: e.target.files[0] }))
-    //           }
-    //         />
-    //         {media.video && (
-    //           <p className="text-sm text-gray-500 mt-1">
-    //             Selected: {media.video.name}
-    //           </p>
-    //         )}
-    //       </div>
-    //     )}
-
-    //     {option.isFile && (
-    //       <div>
-    //         <label className="block font-medium mb-1">Upload Files</label>
-    //         <input
-    //           type="file"
-    //           multiple
-    //           onChange={(e) =>
-    //             setMedia((prev) => ({ ...prev, files: [...e.target.files] }))
-    //           }
-    //         />
-    //         {media.files?.length > 0 && (
-    //           <ul className="text-sm text-gray-500 mt-1 list-disc list-inside">
-    //             {media.files.map((file, index) => (
-    //               <li key={index}>{file.name}</li>
-    //             ))}
-    //           </ul>
-    //         )}
-    //       </div>
-    //     )}
-    //   </div>
-
-    //   <button
-    //     onClick={handleSubmit}
-    //     disabled={submitting}
-    //     className={`mt-2 ${
-    //       submitting ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-    //     } text-white font-semibold px-5 py-2 rounded`}
-    //   >
-    //     {submitting ? "Submitting..." : "Submit"}
-    //   </button>
-    // </div>
   );
 };
-
-// const { useState } = require("react");
-
-// export const ResponseCard = ({ option, onSubmit }) => {
-//     const [textAnswer, setTextAnswer] = useState("");
-//     const [selectedOption, setSelectedOption] = useState(null);
-//     const [media, setMedia] = useState({ photo: null, video: null, file: null });
-
-//     const handleMediaChange = (e, type) => {
-//       setMedia({ ...media, [type]: e.target.files[0] });
-//     };
-
-//     const handleSubmit = () => {
-//       const isTextEmpty =
-//         option.responseType === "text" && !textAnswer.trim();
-//       const isRadioEmpty =
-//         option.responseType === "radio" && !selectedOption;
-
-//       if (isTextEmpty || isRadioEmpty) {
-//         alert("Please fill in the required response before submitting.");
-//         return;
-//       }
-
-//       const response = {
-//         questionId: option._id,
-//         responseType: option.responseType,
-//         answer:
-//           option.responseType === "radio" ? selectedOption : textAnswer,
-//         media,
-//       };
-
-//       console.log("Submitted response:", response);
-//       alert("Response submitted! (Check console)");
-
-//       onSubmit(); // Notify parent to go to next
-//     };
-
-//     return (
-//       <div className="bg-white p-5 rounded-xl shadow border space-y-4 w-full">
-//         <h3 className="font-bold text-lg text-blue-900">{option.question}</h3>
-//         {option.message && (
-//           <p className="text-sm italic text-gray-600">{option.message}</p>
-//         )}
-
-//         {option.responseType === "radio" && (
-//           <div className="space-y-2">
-//             {option.responseOption.map((res) => (
-//               <label
-//                 key={res._id}
-//                 className="flex items-center space-x-2 cursor-pointer"
-//               >
-//                 <input
-//                   type="radio"
-//                   checked={selectedOption === res._id}
-//                   onChange={() => setSelectedOption(res._id)}
-//                 />
-//                 <span
-//                   className={
-//                     selectedOption === res._id ? "font-medium text-blue-700" : ""
-//                   }
-//                 >
-//                   {res.message}
-//                 </span>
-//               </label>
-//             ))}
-//           </div>
-//         )}
-
-//         {option.responseType === "text" && (
-//           <textarea
-//             className="w-full p-2 border rounded"
-//             rows="3"
-//             placeholder="Type your answer..."
-//             value={textAnswer}
-//             onChange={(e) => setTextAnswer(e.target.value)}
-//           />
-//         )}
-
-//         <div className="space-y-3">
-//           {option.isPhoto && (
-//             <div>
-//               <label className="block font-medium mb-1">Upload Photo</label>
-//               <input
-//                 type="file"
-//                 accept="image/*"
-//                 onChange={(e) => handleMediaChange(e, "photo")}
-//               />
-//               {media.photo && (
-//                 <p className="text-sm text-gray-500 mt-1">
-//                   Selected: {media.photo.name}
-//                 </p>
-//               )}
-//             </div>
-//           )}
-//           {option.isVideo && (
-//             <div>
-//               <label className="block font-medium mb-1">Upload Video</label>
-//               <input
-//                 type="file"
-//                 accept="video/*"
-//                 onChange={(e) => handleMediaChange(e, "video")}
-//               />
-//               {media.video && (
-//                 <p className="text-sm text-gray-500 mt-1">
-//                   Selected: {media.video.name}
-//                 </p>
-//               )}
-//             </div>
-//           )}
-//           {option.isFile && (
-//             <div>
-//               <label className="block font-medium mb-1">Upload File</label>
-//               <input
-//                 type="file"
-//                 onChange={(e) => handleMediaChange(e, "file")}
-//               />
-//               {media.file && (
-//                 <p className="text-sm text-gray-500 mt-1">
-//                   Selected: {media.file.name}
-//                 </p>
-//               )}
-//             </div>
-//           )}
-//         </div>
-
-//         <button
-//           onClick={handleSubmit}
-//           className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded"
-//         >
-//           Submit
-//         </button>
-//       </div>
-//     );
-//   };
