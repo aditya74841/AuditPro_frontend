@@ -7,6 +7,7 @@ export const AuditQuestionSlice = createSlice({
     loading: false,
     auditQuestion: [],
     auditOptions: [],
+    totalAudits:0,
     selectedCompany: null,
     message: "",
     error: null,
@@ -24,6 +25,9 @@ export const AuditQuestionSlice = createSlice({
     setMessage: (state, action) => {
       state.message = action.payload;
     },
+    setAuditCount: (state, action) => {
+      state.totalAudits = action.payload;
+    },
     setError: (state, action) => {
       state.error = action.payload;
     },
@@ -37,6 +41,7 @@ export const {
   setAuditQuestion,
   setCompanyName,
   setAuditOptions,
+  setAuditCount
 } = AuditQuestionSlice.actions;
 
 export const createAuditName = (auditData) => async (dispatch) => {
@@ -72,6 +77,7 @@ export const fetchAuditQuestions =
       // console.log("fetchAuditQuestion", data.data);
       dispatch(setLoading(false));
       dispatch(setAuditQuestion(data.data));
+      dispatch(setAuditCount(data.data.allAuditCount))
       dispatch(setAuditOptions(data.data.options));
     } catch (error) {
       dispatch(setError(error.response?.data?.message || error.message));

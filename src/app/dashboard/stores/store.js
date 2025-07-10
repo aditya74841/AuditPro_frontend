@@ -7,6 +7,7 @@ export const StoreSlice = createSlice({
     loading: false,
     stores: [],
     storesName: [],
+    totalStores:0,
     selectedStore: null,
     message: "",
     error: null,
@@ -24,6 +25,9 @@ export const StoreSlice = createSlice({
     setStoreName: (state, action) => {
       state.storesName = action.payload;
     },
+    setStoreCount: (state, action) => {
+      state.totalStores = action.payload;
+    },
     setMessage: (state, action) => {
       state.message = action.payload;
     },
@@ -40,6 +44,7 @@ export const {
   setMessage,
   setError,
   setStoreName,
+  setStoreCount
 } = StoreSlice.actions;
 
 // Create Store
@@ -172,6 +177,8 @@ export const getStoresBasedOnCompany =
         { companyId },
         { withCredentials: true }
       );
+      // console.log("The count of the stores is ", data.data);
+      dispatch(setStoreCount(data.data.totalStores))
       dispatch(setStores(data.data));
     } catch (error) {
       dispatch(setError(error.response?.data?.message || error.message));

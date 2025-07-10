@@ -6,6 +6,7 @@ export const StoreSlice = createSlice({
   initialState: {
     loading: false,
     staff: [],
+    totalUsers: 0,
     selectedStore: null,
     message: "",
     error: null,
@@ -20,6 +21,9 @@ export const StoreSlice = createSlice({
     setSelectedStore: (state, action) => {
       state.selectedStore = action.payload;
     },
+    setTotalUser: (state, action) => {
+      state.totalUsers = action.payload;
+    },
     setMessage: (state, action) => {
       state.message = action.payload;
     },
@@ -29,8 +33,14 @@ export const StoreSlice = createSlice({
   },
 });
 
-export const { setLoading, setSelectedStore, setMessage, setError, setStaff } =
-  StoreSlice.actions;
+export const {
+  setLoading,
+  setSelectedStore,
+  setMessage,
+  setError,
+  setStaff,
+  setTotalUser,
+} = StoreSlice.actions;
 
 // Create Store
 export const createStaff = (storeData) => async (dispatch) => {
@@ -63,7 +73,8 @@ export const fetchStaff =
         { companyId },
         { withCredentials: true }
       );
-      // console.log("The Data from fetchStaff Redux", data.data);
+      console.log("The Data from fetchStaff Redux", data.data);
+      dispatch(setTotalUser(data.data.totalUsers));
       dispatch(setStaff(data.data));
     } catch (error) {
       dispatch(setError(error.response?.data?.message || error.message));
@@ -192,6 +203,5 @@ export const getStoresBasedOnCompany = (companyId) => async (dispatch) => {
     dispatch(setLoading(false));
   }
 };
-
 
 export default StoreSlice.reducer;
