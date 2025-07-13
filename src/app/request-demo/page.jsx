@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useState } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // Form Input Component
 const FormInput = ({

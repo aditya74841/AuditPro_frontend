@@ -262,7 +262,7 @@ export default function DashboardHome() {
             aria-label="Create new project"
           >
             <Folder className="w-5 h-5" />
-            <Link href="/audit">Create New Project</Link>
+            <Link href="/audita=s">Create New Project</Link>
           </motion.button>
           <motion.button
             variants={buttonVariants}
@@ -272,7 +272,7 @@ export default function DashboardHome() {
             aria-label="Review tasks"
           >
             <Store className="w-5 h-5" />
-            <Link href="/response">Review Tasks</Link>
+            <Link href="/responses">Review Tasks</Link>
           </motion.button>
           <motion.button
             variants={buttonVariants}

@@ -118,14 +118,15 @@ export default function HomePage() {
           >
             Get Started
           </motion.button>
-          <motion.button
+          <Link href="/request-demo" passHref legacyBehavior>
+          <motion.a
             variants={buttonVariants}
             whileHover="hover"
             whileTap="tap"
             className="w-full sm:w-48 rounded-full border-2 border-gray-300 bg-transparent px-6 py-3 text-gray-900 font-semibold dark:border-gray-600 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300"
           >
-            <Link href={"/request-demo"}>Request Demo</Link>
-          </motion.button>
+           Request Demo
+          </motion.a></Link>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -540,8 +541,8 @@ const Navbar = ({
             </>
           )}
           {isLoggedIn && (
-            <Link href="/dashboard">
-              <motion.button
+            <Link href="/dashboard" passHref legacyBehavior>
+              <motion.a
                 variants={buttonVariants}
                 whileHover="hover"
                 whileTap="tap"
@@ -549,7 +550,7 @@ const Navbar = ({
                 aria-label="Go to dashboard"
               >
                 Dashboard
-              </motion.button>
+              </motion.a>
             </Link>
           )}
         </motion.div>
