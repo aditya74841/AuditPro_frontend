@@ -110,8 +110,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getStoresBasedOnCompany } from "./stores/store";
 import { fetchStaff } from "./staff/store";
 import { motion } from "framer-motion";
-import { Folder, Store, Users } from "lucide-react";
+import { Folder,  Store, Users } from "lucide-react";
 import { fetchAuditQuestions } from "./audits/store";
+import Link from "next/link";
 
 // Animation variants for cards and buttons
 const cardVariants = {
@@ -235,11 +236,11 @@ export default function DashboardHome() {
           </h2>
           <ol className="list-decimal list-inside space-y-3 text-gray-700 dark:text-gray-300">
             {[
-              "Create a new project using the button below.",
-              "Invite team members to collaborate.",
-              "Assign tasks and set deadlines.",
-              "Track progress with real-time updates.",
-              "Manage projects efficiently from this dashboard.",
+              "Create a user account to get started.",
+              "Set up your store to organize audit data.",
+              "Create audit questions tailored to your needs.",
+              "Submit responses to the audit questions.",
+              "View and analyze audit responses in your dashboard.",
             ].map((item, index) => (
               <li key={index} className="flex items-start">
                 <span className="font-semibold text-blue-600 dark:text-blue-400 mr-2">
@@ -261,7 +262,7 @@ export default function DashboardHome() {
             aria-label="Create new project"
           >
             <Folder className="w-5 h-5" />
-            <span>Create New Project</span>
+            <Link href="/audit">Create New Project</Link>
           </motion.button>
           <motion.button
             variants={buttonVariants}
@@ -271,7 +272,7 @@ export default function DashboardHome() {
             aria-label="Review tasks"
           >
             <Store className="w-5 h-5" />
-            <span>Review Tasks</span>
+            <Link href="/response">Review Tasks</Link>
           </motion.button>
           <motion.button
             variants={buttonVariants}
@@ -281,7 +282,8 @@ export default function DashboardHome() {
             aria-label="Invite team member"
           >
             <Users className="w-5 h-5" />
-            <span>Invite Team Member</span>
+            <Link href="/users">Invite Team Member</Link>
+           
           </motion.button>
         </div>
       </div>

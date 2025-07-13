@@ -73,7 +73,6 @@ export const fetchStaff =
         { companyId },
         { withCredentials: true }
       );
-      console.log("The Data from fetchStaff Redux", data.data);
       dispatch(setTotalUser(data.data.totalUsers));
       dispatch(setStaff(data.data));
     } catch (error) {

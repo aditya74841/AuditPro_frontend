@@ -45,21 +45,21 @@ const items = [
     url: "/dashboard/company",
     icon: Home,
   },
+  // {
+  //   title: "Users",
+  //   url: "/dashboard/users",
+  //   icon: Users,
+  // },
   {
-    title: "Users",
-    url: "/dashboard/users",
-    icon: Users,
-  },
-  {
-    title: "Staff",
+    title: "User",
     url: "/dashboard/staff",
     icon: Users,
   },
-  {
-    title: "Settings",
-    url: "/dashboard/settings",
-    icon: Settings,
-  },
+  // {
+  //   title: "Settings",
+  //   url: "/dashboard/settings",
+  //   icon: Settings,
+  // },
 ];
 
 export function AppSidebar() {

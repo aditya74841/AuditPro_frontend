@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 // Form Input Component
 const FormInput = ({
@@ -161,9 +161,19 @@ const Header = () => {
       <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
         Request a Demo
       </h1>
-      <p className="text-xl text-gray-600 dark:text-gray-300">
-        See how Audit Pro streamlines your auditing process
-      </p>
+
+      {/* Container for home and paragraph */}
+      <div className="relative flex items-center justify-center">
+        {/* Home button aligned left */}
+        <a href="/" className="absolute left-0 text-blue-600 hover:underline">
+          Home
+        </a>
+
+        {/* Centered paragraph */}
+        <p className="text-xl text-gray-600 dark:text-gray-300">
+          See how Audit Pro streamlines your auditing process
+        </p>
+      </div>
     </div>
   );
 };
@@ -219,6 +229,8 @@ const FeaturesSection = () => {
 
 // Main Form Component
 const RequestDemoForm = () => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -281,26 +293,17 @@ const RequestDemoForm = () => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      //   await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      console.log("The form Data is ", formData);
-      console.log("The Url is ", process.env.SERVER_URL);
-
       await axios.post(
         `${process.env.SERVER_URL}/demoRequest/create`,
         formData
       );
 
-      // Mock success response
-      //   setAlert({
-      //     type: "success",
-      //     message:
-      //       "Demo request submitted successfully! We'll contact you within 24 hoursssss.",
-      //   });
-      toast.success(
-        "Demo request submitted successfully! We'll contact you within 24 hours."
-      );
+      setAlert({
+        type: "success",
+        message:
+          "Demo request submitted successfully! We'll contact you within 24 hours.",
+      });
+
       // Reset form
       setFormData({
         name: "",
@@ -309,12 +312,18 @@ const RequestDemoForm = () => {
         companySize: "",
         auditNeeds: "",
       });
+
+      // Redirect to home after 3 seconds
+      setTimeout(() => {
+        router.push("/");
+      }, 3000);
     } catch (error) {
-        console.error("the Error is ",error)
+      console.error("The Error is:", error);
       setAlert({
         type: "error",
         message:
-          error.response.data.message || "Something went wrong. Please try again later.",
+          error?.response?.data?.message ||
+          "Something went wrong. Please try again later.",
       });
     } finally {
       setIsLoading(false);
