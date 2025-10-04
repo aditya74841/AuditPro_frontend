@@ -14,15 +14,11 @@
 // };
 
 // export default IframePage;
+import React from "react";
 
+const IframePage = () => {
 
-
-import React, { useEffect, useState } from "react";
-
-const IframePage = ({ projectId }) => {
-  const [iframeLoaded, setIframeLoaded] = useState(false);
-
-  const iframeUrl = `https://pm.allaboutcse.com/features?projectId=${projectId}`;
+  const iframeUrl = `https://pm.allaboutcse.com/features?projectId=68e128e2bea2411b1ee3d6c9`;
 
   return (
     <div className="w-full h-screen bg-gray-100">
