@@ -28,6 +28,15 @@ export default function RootLayout({ children }) {
   return (
     <Provider store={store}>
       <html lang="en">
+        <head>
+          <link rel="icon" href="./icons.jpeg" type="image/jpeg" sizes="16x16" />
+          <link rel="icon" href="./updatedicon.jpeg" type="image/jpeg"  />
+          <link rel="icon" href="./icons.jpeg" type="image/jpeg" sizes="48x48" />
+          <link rel="shortcut icon" href="/icons.jpeg" type="image/jpeg" />
+          <link rel="apple-touch-icon" href="/icons.jpeg" sizes="180x180" />
+          <link rel="apple-touch-icon" href="/icons.jpeg" sizes="152x152" />
+          <link rel="apple-touch-icon" href="/icons.jpeg" sizes="120x120" />
+        </head>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >

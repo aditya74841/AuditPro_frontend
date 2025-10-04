@@ -1,6 +1,6 @@
-// // Get the directory name of the current module
+// // // Get the directory name of the current module
 
-// /** @type {import('next').NextConfig} */
+// // /** @type {import('next').NextConfig} */
 // const nextConfig = {
 //   images: {
 //     domains: ["localhost"], // ✅ cleaned up

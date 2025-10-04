@@ -1,6 +1,3 @@
-
-
-
 // "use client";
 
 // import Image from "next/image";
@@ -68,15 +65,15 @@
 // );
 
 // // Login Sheet Component
-// const LoginSheet = ({ 
-//   isOpen, 
-//   onOpenChange, 
-//   email, 
-//   setEmail, 
-//   password, 
+// const LoginSheet = ({
+//   isOpen,
+//   onOpenChange,
+//   email,
+//   setEmail,
+//   password,
 //   setPassword,
 //   handleInputChange,
-//   handleLogin 
+//   handleLogin
 // }) => (
 //   <Sheet open={isOpen} onOpenChange={onOpenChange}>
 //     <SheetTrigger asChild>
@@ -141,14 +138,14 @@
 // );
 
 // // Signup Sheet Component
-// const SignupSheet = ({ 
-//   isOpen, 
-//   onOpenChange, 
+// const SignupSheet = ({
+//   isOpen,
+//   onOpenChange,
 //   signupEmail,
 //   setSignupEmail,
 //   signupPassword,
 //   setSignupPassword,
-//   handleSignup 
+//   handleSignup
 // }) => (
 //   <Sheet open={isOpen} onOpenChange={onOpenChange}>
 //     <SheetTrigger asChild>
@@ -265,11 +262,6 @@
 //       })
 //     );
 //   };
-
-
-
-  
-
 
 //   const handleSignup = (e) => {
 //     e.preventDefault();
@@ -636,7 +628,6 @@
 //   );
 // }
 
-
 "use client";
 
 import Image from "next/image";
@@ -694,9 +685,9 @@ const DemoCredentials = ({ onAutoFill }) => (
     </div>
     <div className="flex items-center gap-2 mb-3">
       <span className="font-semibold">Password:</span>
-      <span className="select-all">aditya90060</span>
+      <span className="select-all">xxxxxxxx</span>
     </div>
-    
+
     {/* Auto Fill Button */}
     <motion.button
       variants={buttonVariants}
@@ -706,28 +697,34 @@ const DemoCredentials = ({ onAutoFill }) => (
       className="w-full mb-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg font-medium transition-colors duration-200 shadow-sm flex items-center justify-center gap-2"
     >
       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        <path
+          fillRule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+          clipRule="evenodd"
+        />
       </svg>
       Auto Fill Demo Credentials
     </motion.button>
-    
+
     <div className="text-xs text-blue-700 dark:text-blue-200">
-      <span className="font-semibold">Note:</span> Use this demo email and password to take a look <br/>
-      at the software without creating an account. This allows <br/> you to explore the features and interface as a guest user.
+      <span className="font-semibold">Note:</span> Use this demo email and
+      password to take a look <br />
+      at the software without creating an account. This allows <br /> you to
+      explore the features and interface as a guest user.
     </div>
   </div>
 );
 
 // Login Sheet Component
-const LoginSheet = ({ 
-  isOpen, 
-  onOpenChange, 
-  email, 
-  setEmail, 
-  password, 
+const LoginSheet = ({
+  isOpen,
+  onOpenChange,
+  email,
+  setEmail,
+  password,
   setPassword,
   handleInputChange,
-  handleLogin 
+  handleLogin,
 }) => {
   // Auto-fill function
   const handleDemoAutoFill = () => {
@@ -804,14 +801,14 @@ const LoginSheet = ({
 };
 
 // Signup Sheet Component
-const SignupSheet = ({ 
-  isOpen, 
-  onOpenChange, 
+const SignupSheet = ({
+  isOpen,
+  onOpenChange,
   signupEmail,
   setSignupEmail,
   signupPassword,
   setSignupPassword,
-  handleSignup 
+  handleSignup,
 }) => (
   <Sheet open={isOpen} onOpenChange={onOpenChange}>
     <SheetTrigger asChild>
@@ -1034,18 +1031,16 @@ const HeroSection = ({ setLoginDrawerOpen }) => (
       initial="hidden"
       animate="visible"
     >
-      {"Simplify Your Audits with Audit Pro"
-        .split(" ")
-        .map((word, index) => (
-          <motion.span
-            key={index}
-            custom={index}
-            variants={textVariants}
-            className="inline-block mr-2"
-          >
-            {word}
-          </motion.span>
-        ))}
+      {"Simplify Your Audits with Audit Pro".split(" ").map((word, index) => (
+        <motion.span
+          key={index}
+          custom={index}
+          variants={textVariants}
+          className="inline-block mr-2"
+        >
+          {word}
+        </motion.span>
+      ))}
     </motion.h1>
     <motion.p
       variants={textVariants}
@@ -1054,8 +1049,8 @@ const HeroSection = ({ setLoginDrawerOpen }) => (
       custom={10}
       className="mx-auto mt-6 max-w-xl text-center text-lg text-gray-600 dark:text-gray-300"
     >
-      Streamline compliance, automate reports, and collaborate seamlessly
-      with our all-in-one audit management platform.
+      Streamline compliance, automate reports, and collaborate seamlessly with
+      our all-in-one audit management platform.
     </motion.p>
     <motion.div
       className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
@@ -1127,7 +1122,8 @@ const FeaturesSection = () => {
     {
       icon: <CheckCircle className="w-10 h-10 text-blue-600" />,
       title: "Automated Reports",
-      description: "Generate detailed audit reports in seconds with AI-driven insights.",
+      description:
+        "Generate detailed audit reports in seconds with AI-driven insights.",
     },
     {
       icon: <BarChart className="w-10 h-10 text-blue-600" />,
@@ -1182,11 +1178,13 @@ const TestimonialCard = ({ testimonial, index }) => (
 const TestimonialsSection = () => {
   const testimonials = [
     {
-      quote: "Audit Pro transformed our compliance process, saving us hours every week.",
+      quote:
+        "Audit Pro transformed our compliance process, saving us hours every week.",
       author: "Jane Doe, CFO",
     },
     {
-      quote: "The intuitive interface and powerful features make auditing a breeze.",
+      quote:
+        "The intuitive interface and powerful features make auditing a breeze.",
       author: "John Smith, Compliance Officer",
     },
   ];
@@ -1203,7 +1201,11 @@ const TestimonialsSection = () => {
       </motion.h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {testimonials.map((testimonial, index) => (
-          <TestimonialCard key={index} testimonial={testimonial} index={index} />
+          <TestimonialCard
+            key={index}
+            testimonial={testimonial}
+            index={index}
+          />
         ))}
       </div>
     </section>
