@@ -1,36 +1,153 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AuditPro Client
+
+A modern, full-featured audit management web application built with Next.js. This application provides a comprehensive dashboard for managing audits, stores, staff, and responses with an intuitive user interface.
+
+## Features
+
+- **Dashboard Overview** - Get quick insights into audits, stores, and team members
+- **Audit Management** - Create and manage audit questions
+- **Store Management** - Organize and manage store information
+- **Staff Management** - Add and manage team members
+- **Response Management** - Track and review audit responses
+- **User Profiles** - Manage user profiles and settings
+- **Company Management** - Organize data by company
+- **Modern UI** - Beautiful, responsive interface with dark mode support
+
+## Tech Stack
+
+- **Framework**: Next.js 15.3.0
+- **React**: 19.0.0
+- **State Management**: Redux Toolkit, React Redux
+- **Styling**: Tailwind CSS 4
+- **UI Components**: Radix UI, Lucide React, Tabler Icons
+- **Table Management**: TanStack React Table
+- **Animations**: Framer Motion
+- **HTTP Client**: Axios
+- **Notifications**: React Hot Toast, React Toastify
+- **Form Handling**: React Select
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 18+ and npm (or yarn/pnpm/bun)
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repository-url>
+cd auditmainclient
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+3. Set up environment variables (if needed):
+   - The project is configured to use a backend API hosted on Render
+   - Update `next.config.mjs` if you need to change API endpoints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-To learn more about Next.js, take a look at the following resources:
+## Available Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `npm run dev` - Start development server with Turbopack
+- `npm run build` - Build the application for production
+- `npm start` - Start the production server
+- `npm run lint` - Run ESLint to check code quality
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+auditmainclient/
+├── src/
+│   ├── app/                    # Next.js app router pages
+│   │   ├── dashboard/          # Dashboard pages
+│   │   │   ├── audits/         # Audit management
+│   │   │   ├── stores/         # Store management
+│   │   │   ├── staff/          # Staff management
+│   │   │   ├── responses/      # Response management
+│   │   │   ├── company/        # Company management
+│   │   │   ├── users/          # User management
+│   │   │   ├── profile/        # User profile
+│   │   │   └── settings/       # Settings
+│   │   ├── management/         # Management page
+│   │   ├── request-demo/       # Demo request page
+│   │   └── page.js             # Home page
+│   ├── components/             # React components
+│   │   ├── dashboard/          # Dashboard-specific components
+│   │   ├── HomePage/           # Home page components
+│   │   ├── Table/              # Table components
+│   │   └── ui/                 # UI component library
+│   ├── hooks/                  # Custom React hooks
+│   ├── lib/                    # Utility functions
+│   └── utils/                  # Helper utilities
+├── public/                     # Static assets
+└── package.json               # Project dependencies
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment Configuration
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application is configured to connect to a backend API. The API URLs are configured in `next.config.mjs`:
+
+- `MASTER_SERVER_URL` - Master server endpoint
+- `USER_SERVER_URL` - User service endpoint
+- `COMPANY_SERVER_URL` - Company service endpoint
+- `NEXT_PUBLIC_SERVER_URL` - Public API endpoint
+
+## Key Features Overview
+
+### Dashboard
+- Real-time statistics for audits, stores, and team members
+- Quick action buttons for common tasks
+- Getting started guide for new users
+
+### Audit Management
+- Create and manage audit questions
+- Organize audits by company and store
+- View audit responses and analytics
+
+### Store Management
+- Add and manage store information
+- Filter stores by company
+- Store-based audit organization
+
+### Staff Management
+- Add team members to companies
+- Role-based access control
+- Staff assignment to stores
+
+## Development
+
+This project uses:
+- **Next.js App Router** for routing and page structure
+- **Redux Toolkit** for state management
+- **Tailwind CSS** for styling
+- **TypeScript/JavaScript** for type safety (via jsconfig.json)
+
+## Deployment
+
+The application can be deployed to platforms like Vercel, Netlify, or any Node.js hosting service:
+
+1. Build the application: `npm run build`
+2. Start the production server: `npm start`
+
+For Vercel deployment:
+```bash
+vercel
+```
+
+## License
+
+This project is private and proprietary.
+
+## Support
+
+For issues and questions, please contact the development team.
